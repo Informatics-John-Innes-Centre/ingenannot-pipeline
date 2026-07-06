@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: debian:13.3
+
+%labels
+    Author: Maximillian Jones
+    Package: miniprot
+    Version: 0.18
+    Provides: miniprot
+    Institute: JIC
+
+%environment
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export PATH=/opt/software/bin:/opt/miniforge3/condabin:$PATH
+
+%post
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y --no-install-recommends wget ca-certificates which less
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+mkdir -p /opt
+cd /opt
+RELEASE="Miniforge3-Linux-x86_64.sh"
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/${RELEASE}"
+bash $RELEASE -b -p /opt/miniforge3
+rm -f $RELEASE
+rm -f /opt/miniforge3/.condarc
+export PATH=/opt/miniforge3/condabin:$PATH
+conda config --add channels conda-forge
+conda config --add channels bioconda
+conda config --set channel_alias "https://repo.prefix.dev"
+conda config --show-sources
+
+mamba create -qy -p /opt/software bioconda::miniprot=0.18
+mamba clean -afy
+
+%test
+miniprot --version

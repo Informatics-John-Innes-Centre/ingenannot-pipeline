@@ -1,0 +1,13 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+.nextflow.log*
+work/
+singularity-cache/
+.nextflow/
+logs/
+results/
+.pixi/
+resume.sh
+run.sh
+*.slurm

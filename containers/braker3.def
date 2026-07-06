@@ -1,0 +1,2 @@
+BootStrap: docker
+From: teambraker/braker3:latest

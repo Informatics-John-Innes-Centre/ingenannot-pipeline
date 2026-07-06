@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: debian:13.3
+
+%labels
+    Author: Maximillian Jones
+    Package: Ingennanot
+    Version: 0.0.19
+    Provides: ingenannot 
+    Institute: JIC
+
+%environment
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+%post
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y --no-install-recommends wget ca-certificates which less python3-pip git
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+
+#pip3 install ingenannot --break-system-packages
+
+git clone https://forge.inrae.fr/bioger/ingenannot.git
+
+sed -i 's/tbx = pysam.TabixFile(transcript_file)/tbx = pysam.TabixFile(transcript_file, index = transcript_file + ".csi")/' \
+/ingenannot/ingenannot/utils/annot_edit_distance.py
+
+cd ingenannot
+pip install -e . --break-system-packages
+
+%test
+ingenannot -h

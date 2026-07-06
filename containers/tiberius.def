@@ -1,0 +1,16 @@
+BootStrap: docker
+From: larsgabriel23/tiberius:1.1.8
+
+%post
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/chlorophyta.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/diatoms_weights.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/diatoms_unmasked.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/eudicotyledons_weights.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/fungi.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/insecta_weights.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/insecta_unmasked_v2.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/tiberius_nosm_weights_v2.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/tiberius_weights_v2.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/monocotyledonae_weights.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/vertebrates_weights.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+chmod 755 /opt/Tiberius/model_weights/*

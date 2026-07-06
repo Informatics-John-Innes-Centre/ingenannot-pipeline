@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: debian:13.3
+
+%labels
+    Author: Maximillian Jones
+    Package: STAR
+    Version: 2.7.11b
+    Provides: STAR
+    Institute: JIC
+
+%environment
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export PATH=/opt/STAR-2.7.11b/bin/Linux_x86_64_static:$PATH
+
+%post
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y --no-install-recommends wget ca-certificates which less
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+mkdir -p /opt
+cd /opt
+wget https://github.com/alexdobin/STAR/archive/2.7.11b.tar.gz
+tar -xzf 2.7.11b.tar.gz
+
+%test
+STAR --help
