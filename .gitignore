@@ -4,6 +4,7 @@
 .nextflow.log*
 work/
 singularity-cache/
+singularity-cache
 .nextflow/
 logs/
 results/

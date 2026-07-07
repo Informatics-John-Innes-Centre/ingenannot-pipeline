@@ -1,3 +1,5 @@
+
+
 process helixer {
     input:
     val genome_prefix
@@ -9,7 +11,7 @@ process helixer {
     script:
     """
     Helixer.py\
-        --downloaded-model-path ${params.helixerModelDir} \
+        --downloaded-model-path /opt/helixer/models \
         --lineage land_plant \
         --fasta-path ${masked_fasta} \
         --species Pisum \
@@ -33,7 +35,7 @@ process annevo {
     """
     python /opt/ANNEVO/annotation.py \
         --genome ${masked_fasta} \
-        --model_path ${params.annevoModelDir} \
+        --model_path /opt/ANNEVO/saved_model/ANNEVO_Magnoliopsida.pt \
         --output ${genome_prefix}_annevo.gff \
         --lineage Magnoliopsida \
         --threads ${task.cpus} \
@@ -53,7 +55,7 @@ process tiberius {
     """
     python /opt/Tiberius/tiberius.py \
         --genome ${masked_fasta} \
-        --model ${params.tiberiusModelDir} \
+        --model /opt/Tiberius/model_weights/eudicotyledons_weights \
         --out ${genome_prefix}_tiberius.gtf
     """
 }

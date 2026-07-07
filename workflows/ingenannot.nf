@@ -12,27 +12,6 @@ process ingenannot_validate_annotation {
     """
 }
 
-process convert_tiberius_gtf_to_gff3 {
-    input:
-    tuple val(label), path(tiberius)
-    val genome_prefix
-
-    output:
-    tuple val(label), path("${genome_prefix}_tiberius.gff")
-
-    script:
-    """
-    agat_convert_sp_gxf2gxf.pl \
-        -c \
-        --expose \
-        -gff ${tiberius} \
-        -o ${genome_prefix}_tiberius.gff \
-        -gvo 3 \
-        --no_progressbar
-    """
-}
-
-
 process sort_bgzip_index_miniprot_mappings {
     input:
     val genome_prefix
@@ -283,7 +262,7 @@ process ingenannot_compare {
 workflow ingenannot {
     take:
     masked_file
-    tiberius_annotation_gtf
+    tiberius_annotation
     helixer_annotation
     braker_annotation
     annevo_annotation
@@ -297,22 +276,13 @@ workflow ingenannot {
     
     def cram_flnc = channel.fromPath("${params.isoseqDirectory}/${isoseq_prefix}.flnc.cram")
 
-    def tiberius_annotation_gff3 = convert_tiberius_gtf_to_gff3(tiberius_annotation_gtf, genome_prefix)
-
     // validate the 4 annotations
     def annotations = annevo_annotation
         .mix(braker_annotation)
         .mix(helixer_annotation)
-        .mix(tiberius_annotation_gff3)
+        .mix(tiberius_annotation)
         
     def validated_annotations_ch = ingenannot_validate_annotation(annotations)
-
-    //def validated_annotations = validated_annotations_ch.branch {
-    //    helixer:  it[0] == 'helixer'
-    //    braker:   it[0] == 'braker'
-    //    annevo:   it[0] == 'annevo'
-    //    tiberius: it[0] == 'tiberius'
-    //}
 
     // magic with miniprot
     def miniprot_gff_csi_ch = sort_bgzip_index_miniprot_mappings(genome_prefix, miniprot_alignment)
@@ -344,20 +314,7 @@ workflow ingenannot {
         stringtie_gff_csi_ch.collect(), 
         top_isoforms_gff_csi_ch.collect()
     )
-    
-    // HARDCODED
-    /*
-    def tiberius_aed_score = channel.of(tuple('tiberius', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_outputs/JI1006_v3.0_tiberius.aed.gff")))    
-    def annevo_aed_scor = channel.of(tuple('annevo', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_outputs/JI1006_v3.0_annevo.aed.gff")))
-    def braker_aed_score = channel.of(tuple('braker', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_outputs/JI1006_v3.0_braker3.aed.gff")))
-    def helixer_aed_score = channel.of(tuple('helixer', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_outputs/JI1006_v3.0_helixer.aed.gff")))
 
-    def aed_scores = tiberius_aed_score
-        .mix(annevo_aed_scor)
-        .mix(braker_aed_score)
-        .mix(helixer_aed_score)
-    */  
-    // END HARDCODED
     
     def select_fof_ch = aed_scores_ch
         .map { annotation_name, aed_gff_path, _aed_scatter_hist ->
@@ -367,7 +324,6 @@ workflow ingenannot {
 
     def select_output = ingenannot_selection_process(genome_prefix, select_fof_ch)
 
-    //def select_output = channel.of(file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_outputs/JI1006_v3.0_select.genes.gff"))
 
     def compare_fof_ch = select_fof_ch
     .combine(select_output.gff)

@@ -1,0 +1,34 @@
+Bootstrap: docker
+From: debian:13.5
+
+%labels
+    Author William Redding
+    Version version_here
+    Description "Debian container for xxxxx"
+    Provides
+    Institute JIC
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+    export PATH=/opt/software/bin:/opt/miniforge/bin:/opt/miniforge3/condabin:$PATH
+%post
+    set -e
+    apt-get update
+    apt-get install -y wget git vim ca-certificates less which locales-all
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+    mkdir -p /opt
+    cd /opt
+    RELEASE="Miniforge3-Linux-x86_64.sh"
+    wget "https://github.com/conda-forge/miniforge/releases/latest/download/${RELEASE}"
+    bash $RELEASE -b -p /opt/miniforge3
+    rm -f $RELEASE
+    rm -f /opt/miniforge3/.condarc
+    export PATH=/opt/miniforge3/condabin:$PATH
+    conda config --add channels conda-forge
+    conda config --add channels bioconda
+    conda config --set channel_alias "https://repo.prefix.dev"
+    conda install -y mamba
+    mamba create -qy -p /opt/software bedtools=2.31.1
+    export PATH=/opt/software/bin:$PATH
+    conda clean -afy

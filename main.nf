@@ -19,9 +19,6 @@ process softmask {
 
 params {
     frozDir
-    helixerModelDir
-    annevoModelDir
-    tiberiusModelDir
     accessionFile
     proteinDatabase
     fastqDirectory
@@ -61,22 +58,7 @@ workflow {
         genome_prefix, 
         isoseq_prefix
     )
-    //  HARCODED
-    /* 
-    def tiberius_annotation = channel.of(tuple('tiberius', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/JI1006_v3.0_tiberius_2.0.6.gtf")))    
-    def miniprot_alignment = channel.of(tuple('miniprot', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/JI1006_v3.0_miniprot.gff3")))
-    def annevo_annotation = channel.of(tuple('annevo', file("/jic/scratch
-/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/JI1006_v3.0_annevo.gff")))
-    def braker_annotation = channel.of(tuple('braker', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/JI1006_v3.0_braker3.gff")))
-    def helixer_annotation = channel.of(tuple('helixer', file("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/JI1006_v3.0_helixer.gff")))
-    def all_bams = channel.fromPath("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/star_pass2/*")
-    channel
-        .fromPath("/jic/scratch/platforms/informatics/peaterpan/nextflow_annotation/inputs/ingenannot_inputs/stringtie/Piful_JI1006-*.gtf")
-        .collect()
-        .set { stringtie_transcripts }
-    def ingenannot_result = ingenannot(masked_file, tiberius_annotation, helixer_annotation, braker_annotation, annevo_annotation, miniprot_alignment, all_bams, stringtie_transcripts, genome_prefix, isoseq_prefix, )
-    */
-    // HARDCODED
+
     publish:
     tiberius_annotation = annotate_result.tiberius_annotation
     annevo_annotation = annotate_result.annevo_annotation
