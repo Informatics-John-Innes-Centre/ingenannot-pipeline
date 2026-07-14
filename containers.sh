@@ -7,7 +7,8 @@ mkdir -p singularity-cache
 sudo singularity build singularity-cache/bedtools.sif containers/bedtools.def
 sudo singularity build singularity-cache/helixer.sif containers/helixer.def
 sudo singularity build singularity-cache/annevo.sif containers/annevo.def
-sudo singularity build singularity-cache/tiberius.sif containers/tiberius.def
+sudo singularity build singularity-cache/tiberius-1.1.8.sif containers/tiberius-1.1.8.def
+sudo singularity build singularity-cache/tiberius-2.0.6.sif containers/tiberius-2.0.6.def
 sudo singularity build singularity-cache/miniprot.sif containers/miniprot.def
 sudo singularity build singularity-cache/cutadapt.sif containers/cutadapt.def
 sudo singularity build singularity-cache/star.sif containers/star.def

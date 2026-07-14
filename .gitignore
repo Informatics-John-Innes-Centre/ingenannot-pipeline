@@ -9,6 +9,7 @@ singularity-cache
 logs/
 results/
 .pixi/
+work
 resume.sh
 run.sh
 *.slurm

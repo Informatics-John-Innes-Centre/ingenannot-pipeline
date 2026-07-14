@@ -30,9 +30,12 @@ process annevo {
 
     output:
     tuple val("annevo"), path("${genome_prefix}_annevo.gff")
-    
+
     script:
     """
+    export NUMBA_CACHE_DIR="\$PWD/.numba_cache"
+    mkdir -p "\$NUMBA_CACHE_DIR"
+
     python /opt/ANNEVO/annotation.py \
         --genome ${masked_fasta} \
         --model_path /opt/ANNEVO/saved_model/ANNEVO_Magnoliopsida.pt \
@@ -55,7 +58,7 @@ process tiberius {
     """
     python /opt/Tiberius/tiberius.py \
         --genome ${masked_fasta} \
-        --model /opt/Tiberius/model_weights/eudicotyledons_weights \
+        --model /opt/Tiberius/model_weights/angiosperms_softmasking \
         --out ${genome_prefix}_tiberius.gtf
     """
 }
