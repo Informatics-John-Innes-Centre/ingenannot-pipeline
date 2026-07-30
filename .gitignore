@@ -13,3 +13,5 @@ work
 resume.sh
 run.sh
 *.slurm
+accession_files.csv
+work-old/

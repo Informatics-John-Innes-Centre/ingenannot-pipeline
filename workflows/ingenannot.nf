@@ -1,162 +1,9 @@
-
-process ingenannot_validate_annotation {
-    input:
-    tuple val(label), path(annotation)
-
-    output:
-    tuple val(label), path(annotation)
-
-    script:
-    """
-    ingenannot -v 2 validate ${annotation}
-    """
-}
-
-process sort_bgzip_index_miniprot_mappings {
-    input:
-    val genome_prefix
-    tuple val(label), path(miniprot)
-
-    output:
-    tuple path("${genome_prefix}_miniprot_sorted.gff.gz"),
-          path("${genome_prefix}_miniprot_sorted.gff.gz.csi")
-
-    script:
-    """
-    sort -k1,1 -k4g,4 --parallel=${task.cpus} ${miniprot} > ${genome_prefix}_miniprot_sorted.gff
-    bgzip --threads ${task.cpus} ${genome_prefix}_miniprot_sorted.gff
-    tabix -C -p gff ${genome_prefix}_miniprot_sorted.gff.gz
-    """
-}
-
-process combine_stringtie_transcripts {
-    input:
-    val genome_prefix
-    path transcripts
-
-    output:
-    path "${genome_prefix}_stringtie_whole.gff"
-
-    script:
-    """
-    stringtie --merge ${transcripts} -o ${genome_prefix}_stringtie_whole.gff -l ${genome_prefix}_str
-    """
-}
-
-process sort_bgzip_index_combined_stringtie_transcript {
-    input:
-    val genome_prefix
-    path combined_transcript
-
-    output:
-    tuple path("${genome_prefix}_stringtie_whole_sorted.gff.gz"),
-          path("${genome_prefix}_stringtie_whole_sorted.gff.gz.csi")
-
-    script:
-    """
-    sort -k1,1 -k4g,4 --parallel=${task.cpus} ${combined_transcript} | \
-    bgzip -c --threads ${task.cpus} - > ${genome_prefix}_stringtie_whole_sorted.gff.gz
-    tabix -C -p gff ${genome_prefix}_stringtie_whole_sorted.gff.gz
-    """
-}
-
-process create_masked_fasta_minimap_index {
-    input:
-    val genome_prefix
-    path masked_fasta
-
-    output:
-    path "${genome_prefix}_masked.fasta.mmi"
-
-    script:
-    """
-    pbmm2 index \
-        --preset ISOSEQ \
-        ${masked_fasta} \
-        ${genome_prefix}_masked.fasta.mmi
-    """
-}
-
-process convert_cram_flnc_to_bam {
-    input:
-    val genome_prefix
-    path cram_flnc
-
-    output:
-    path "${genome_prefix}.flnc.bam"
-
-    script:
-    """
-    samtools view \
-    -b  \
-    -o ${genome_prefix}.flnc.bam \
-    ${cram_flnc}
-    """
-}
-
-process align_isoseq_reads_to_genome {
-    input:
-    val genome_prefix
-    path masked_fasta_index
-    path bam_flnc
-
-    output:
-    path "${genome_prefix}_iso.bam"
-
-    script:
-    """
-    pbmm2 align \
-        ${masked_fasta_index} \
-        ${bam_flnc}\
-        ${genome_prefix}_iso.bam \
-        --sort \
-        -j ${task.cpus} \
-        -J ${task.cpus} \
-        --bam-index CSI
-    """
-}
-
-process collapse_isoseq {
-    input: 
-    val genome_prefix
-    path aligned_isoseq
-
-    output:
-    path "${genome_prefix}_collapse_iso.gff"
-
-    script:
-    """
-    isoseq collapse \
-        --do-not-collapse-extra-5exons \
-        ${aligned_isoseq}  \
-        ${genome_prefix}_collapse_iso.gff
-    """
-}
-
-process samtools_index {
-    input:
-    path target
-
-    output:
-    path "${target}.csi"
-
-    script: 
-    """
-    samtools index -c ${target}
-    """
-}
-
 process isoform_ranking {
-
     input:
-    val genome_prefix
-    path collapsed_isoseq
-    path bam_indexes
-    path bam_files
-    val manifest_str
+    tuple val(genome_prefix), path(collapsed_isoseq), path(bams), path(indices), val(manifest_str)
 
     output:
-    path "${genome_prefix}_isoforms.top.gff"
+    tuple val(genome_prefix), path("${genome_prefix}_isoforms.top.gff")
 
     script:
     """
@@ -170,12 +17,10 @@ process isoform_ranking {
 
 process sort_bgzip_index_top_isoforms {
     input:
-    val genome_prefix
-    path top_isoforms
+    tuple val(genome_prefix), path(top_isoforms)
 
     output:
-    tuple path("${genome_prefix}_lr_top_sorted.gff.gz"),
-          path("${genome_prefix}_lr_top_sorted.gff.gz.csi")
+    tuple val(genome_prefix), path("${genome_prefix}_lr_top_sorted.gff.gz"), path("${genome_prefix}_lr_top_sorted.gff.gz.csi")
 
     script:
     """
@@ -185,16 +30,13 @@ process sort_bgzip_index_top_isoforms {
     """
 }
 
+
 process compute_aed_score_for_annotation {
     input:
-    val genome_prefix
-    tuple val(label), path(annotation)
-    tuple path(miniprot_gff), path(miniprot_gff_csi)
-    tuple path(stringtie_gff), path(stringtie_gff_csi)
-    tuple path(top_isoforms_gff), path(top_isoforms_gff_csi)
-    
+    tuple val(genome_prefix), val(label), path(annotation), path(miniprot_gff), path(miniprot_gff_csi), path(stringtie_gff), path(stringtie_gff_csi), path(top_isoforms_gff), path(top_isoforms_gff_csi)
+
     output:
-    tuple val(label), path("${genome_prefix}_${label}.aed.gff"), path("scatter_hist_aed.${label}.png")
+    tuple val(genome_prefix), val(label), path("${genome_prefix}_${label}.aed.gff"), path("scatter_hist_aed.${label}.png")
 
     script:
     """
@@ -217,18 +59,16 @@ process compute_aed_score_for_annotation {
 
 process ingenannot_selection_process {
     input:
-    val genome_prefix
-    path select_file
+    tuple val(genome_prefix), val(select_file_contents)
 
     output:
-    path("${genome_prefix}_select.genes.gff"), emit: gff
-    path("${genome_prefix}_select.genes.gff.scatter_hist_aed.png"), emit: plot
-
+    tuple val(genome_prefix), path("${genome_prefix}_select.genes.gff"), path("${genome_prefix}_select.genes.gff.scatter_hist_aed.png")
     script:
     """
+    printf '%s\n' "${select_file_contents}" > ${genome_prefix}_select.fof
     ingenannot -v 2 -p ${task.cpus} \
         select \
-        ${select_file} \
+        ${genome_prefix}_select.fof \
         ${genome_prefix}_select.genes.gff \
         --noaed \
         --clustranded \
@@ -245,102 +85,86 @@ process ingenannot_selection_process {
 
 process ingenannot_compare {    
     input:
-    path select_output
-    path compare_fof
+    tuple val(genome_prefix), val(compare_file_contents)
 
     output:
-    path "ingenannot_compare.log"
+    tuple val(genome_prefix), path("ingenannot_compare.log")
 
     script:
     """
+    printf '%s\n' "${compare_file_contents}" > ${genome_prefix}_compare.fof
     ingenannot -v 2 -p ${task.cpus} \
     compare \
-    ${compare_fof} > "ingenannot_compare.log"
+    ${genome_prefix}_compare.fof > "ingenannot_compare.log"
     """
 }
 
 workflow ingenannot {
     take:
-    masked_file
-    tiberius_annotation
-    helixer_annotation
-    braker_annotation
-    annevo_annotation
-    miniprot_alignment
-    star_pass2
-    stringtie_transcripts
-    genome_prefix
-    isoseq_prefix
-    
+    annotations
+    collapsed_isoseq
+    bam_files
+    bam_indices
+    miniprot_gff_csi
+    stringtie_gff_csi
+
     main:
-    
-    def cram_flnc = channel.fromPath("${params.isoseqDirectory}/${isoseq_prefix}.flnc.cram")
 
-    // validate the 4 annotations
-    def annotations = annevo_annotation
-        .mix(braker_annotation)
-        .mix(helixer_annotation)
-        .mix(tiberius_annotation)
-        
-    def validated_annotations_ch = ingenannot_validate_annotation(annotations)
+    def manifest = bam_files
+        .map { genome, bams ->
+            tuple(
+                genome,
+                bams.collect { "${it.name}\ttrue\ttrue" }.join('\n')
+            )
+        }
+    def isoform_ranking_input = collapsed_isoseq
+        .join(bam_files)
+        .join(bam_indices)
+        .join(manifest)
 
-    // magic with miniprot
-    def miniprot_gff_csi_ch = sort_bgzip_index_miniprot_mappings(genome_prefix, miniprot_alignment)
-    
-     //combine em to one!
-    def combined_stringtie_transcript = combine_stringtie_transcripts(genome_prefix, stringtie_transcripts)
-    def stringtie_gff_csi_ch = sort_bgzip_index_combined_stringtie_transcript(genome_prefix, combined_stringtie_transcript)
+    def top_isoforms = isoform_ranking(isoform_ranking_input)
 
-    def masked_fasta_minimap_index = create_masked_fasta_minimap_index(genome_prefix, masked_file)
+    def top_isoforms_gff_csi_ch =
+        sort_bgzip_index_top_isoforms(top_isoforms)
 
-    def bam_flnc = convert_cram_flnc_to_bam(genome_prefix, cram_flnc)
-    def aligned_isoseq_reads = align_isoseq_reads_to_genome(genome_prefix, masked_fasta_minimap_index, bam_flnc)
-    def collapsed_isoseq = collapse_isoseq(genome_prefix, aligned_isoseq_reads)
+    def aed_input = annotations
+        .join(miniprot_gff_csi)
+        .join(stringtie_gff_csi)
+        .join(top_isoforms_gff_csi_ch)
 
-    ch_manifest_str = star_pass2
-        .collect()
-        .map { bam_list ->
-            bam_list.collect { bam -> "${bam.name}\ttrue\ttrue" }.join('\n')
+    def aed_scores_ch =
+        compute_aed_score_for_annotation(aed_input)
+
+    def select_fof_input = aed_scores_ch
+        .map { genome_prefix, label, aed_gff, _plot ->
+            tuple(genome_prefix, "${aed_gff}\t${label}")
+        }
+        .groupTuple()
+
+    def selection_process_input = select_fof_input
+        .map { genome_prefix, lines ->
+            tuple(genome_prefix, lines.join('\n'))
         }
 
-    def bam_indexes = samtools_index(star_pass2).collect()
-    def top_isoforms = isoform_ranking(genome_prefix, collapsed_isoseq, bam_indexes, star_pass2.collect(), ch_manifest_str)   
-    def top_isoforms_gff_csi_ch = sort_bgzip_index_top_isoforms(genome_prefix, top_isoforms)
+    def select_output =
+        ingenannot_selection_process(selection_process_input)
 
-    def aed_scores_ch = compute_aed_score_for_annotation(
-        genome_prefix, 
-        validated_annotations_ch, 
-        miniprot_gff_csi_ch.collect(), 
-        stringtie_gff_csi_ch.collect(), 
-        top_isoforms_gff_csi_ch.collect()
-    )
-
-    
-    def select_fof_ch = aed_scores_ch
-        .map { annotation_name, aed_gff_path, _aed_scatter_hist ->
-            "${aed_gff_path}\t${annotation_name}"
+    def comparison_process_input = select_fof_input
+        .map { genome_prefix, lines ->
+            tuple(
+                genome_prefix,
+                (lines + "${genome_prefix}_select.genes.gff\tselect")
+                    .join('\n')
+            )
         }
-        .collectFile(name: "${genome_prefix}_select.fof", newLine: true, sort: false)
 
-    def select_output = ingenannot_selection_process(genome_prefix, select_fof_ch)
+    def ingenannot_compare_log_ch =
+        ingenannot_compare(comparison_process_input)
 
-
-    def compare_fof_ch = select_fof_ch
-    .combine(select_output.gff)
-    .flatMap { fof, select_path ->
-        fof.readLines() + ["${select_path}\tselect"]
-    }
-    .collectFile(name: "${genome_prefix}_compare.fof", newLine: true, sort: false)
-
-    
-    def ingenannot_compare_log_ch = ingenannot_compare(select_output.gff, compare_fof_ch)
-
-    emit: 
-    ingenannot_compare_log = ingenannot_compare_log_ch
-    aed_scores = aed_scores_ch
-    ingenannot_select_gff = select_output.gff
-    ingenannot_select_plot = select_output.plot
-    miniprot_gff_csi = miniprot_gff_csi_ch
-    stringtie_gff_csi = stringtie_gff_csi_ch
+    emit:
     top_isoforms_gff_csi = top_isoforms_gff_csi_ch
+    aed_scores = aed_scores_ch
+    selection = select_output
+    comparison_log = ingenannot_compare_log_ch
 }
+
