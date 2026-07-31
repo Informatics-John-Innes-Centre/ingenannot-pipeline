@@ -140,8 +140,6 @@ workflow star {
             tuple(genome_prefix, sj_files.sort { it.name })
         }
 
-    all_sj.view()
-
     def second_pass_input = first_star_pass_input.combine(all_sj, by: 0)
 
     def second_star_pass = star_map_rnaseq_data_second_pass(second_pass_input)
