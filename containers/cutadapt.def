@@ -16,7 +16,7 @@ export PATH=/opt/software/bin:/opt/miniforge3/condabin:$PATH
 %post
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y --no-install-recommends wget ca-certificates which less
+apt-get install -y --no-install-recommends wget ca-certificates which less procps
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 mkdir -p /opt
