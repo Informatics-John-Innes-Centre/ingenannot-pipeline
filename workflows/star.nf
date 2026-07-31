@@ -43,7 +43,7 @@ process star_map_rnaseq_data_first_pass {
     tuple val(genome_prefix), path(star_index), val(sample_id), path(reads)
 
     output:
-    tuple val(genome_prefix), val(sample_id), path("${sample_id}_SJ.out.tab")
+    tuple val(genome_prefix), val(sample_id), path("${sample_id}_first_pass_SJ.out.tab")
 
     script:
     """
@@ -51,7 +51,7 @@ process star_map_rnaseq_data_first_pass {
     --readFilesIn ${reads[0]} \
                     ${reads[1]} \
     --readFilesCommand zcat \
-    --outFileNamePrefix ${sample_id}_ \
+    --outFileNamePrefix ${sample_id}_first_pass_ \
     --runThreadN ${task.cpus} \
     --genomeDir ${star_index} \
     --genomeLoad NoSharedMemory \
