@@ -168,55 +168,37 @@ output {
 
     star_bams {
         path { genome_prefix, _sample, _bam, _csi ->
-            [
-                "${genome_prefix}/star_mappings",
-                "${genome_prefix}/star_mappings"
-            ]
+            "${genome_prefix}/star_mappings"
         }
     }
 
     miniprot {
         path { genome_prefix, _gff, _csi ->
-            [
-                "${genome_prefix}/miniprot",
-                "${genome_prefix}/miniprot"
-            ]
+            "${genome_prefix}/miniprot"            
         }
     }
 
     stringtie {
         path { genome_prefix, _gff, _csi ->
-            [
-                "${genome_prefix}/stringtie",
-                "${genome_prefix}/stringtie"
-            ]
+            "${genome_prefix}/stringtie"
         }
     }
 
     top_isoforms_gff_csi {
         path { genome_prefix, _gff, _csi ->
-            [
-                "${genome_prefix}/top_isoforms",
-                "${genome_prefix}/top_isoforms"
-            ]
+            "${genome_prefix}/top_isoforms"
         }
     }
 
     aed_scores {
         path { genome_prefix, _aed_gff, _plot ->
-            [
-                "${genome_prefix}/ingenannot",
-                "${genome_prefix}/ingenannot"
-            ]
+            "${genome_prefix}/ingenannot"
         }
     }
 
     ingenannot_selection {
         path { genome_prefix, _select_gff, _histogram ->
-            [
-                "${genome_prefix}/ingenannot",
-                "${genome_prefix}/ingenannot"
-            ]
+            "${genome_prefix}/ingenannot"
         }
     }
 
