@@ -128,9 +128,9 @@ workflow ingenannot {
         sort_bgzip_index_top_isoforms(top_isoforms)
 
     def aed_input = annotations
-        .join(miniprot_gff_csi)
-        .join(stringtie_gff_csi)
-        .join(top_isoforms_gff_csi_ch)
+        .combine(miniprot_gff_csi, by: 0)
+        .combine(stringtie_gff_csi, by: 0)
+        .combine(top_isoforms_gff_csi_ch, by: 0)
 
     def aed_scores_ch =
         compute_aed_score_for_annotation(aed_input)
