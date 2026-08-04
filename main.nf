@@ -39,6 +39,7 @@ workflow genome {
     genome_prefixes
     cram_flnc
     rnaseq_pairs
+    sample_counts
 
     main:
     def softmasking_input = genome_prefixes.map{ genome_prefix -> 
@@ -48,16 +49,20 @@ workflow genome {
             file("${params.frozDir}/${genome_prefix}/${genome_prefix}_all_repeats.bed"))
     }
     def masked_file = softmask(softmasking_input)    
-    def star = star(masked_file, rnaseq_pairs)
+    def star = star(masked_file, rnaseq_pairs, sample_counts)
 
     def bam_files = star.bams
         .map { genome, sample, bam, _csi ->
             tuple(genome, tuple(sample, bam))
         }
+        .combine(sample_counts, by: 0)
+        .map { genome, entry, count ->
+            tuple(groupKey(genome, count), entry)
+        }
         .groupTuple()
-        .map { genome, entries ->
+        .map { gkey, entries ->
             tuple(
-                genome,
+                gkey.toString(),
                 entries.sort { it[0] }.collect { it[1] }
             )
         }
@@ -66,17 +71,21 @@ workflow genome {
         .map { genome, sample, _bam, csi ->
             tuple(genome, tuple(sample, csi))
         }
+        .combine(sample_counts, by: 0)
+        .map { genome, entry, count ->
+            tuple(groupKey(genome, count), entry)
+        }
         .groupTuple()
-        .map { genome, entries ->
+        .map { gkey, entries ->
             tuple(
-                genome,
+                gkey.toString(),
                 entries.sort { it[0] }.collect { it[1] }
             )
         }
 
     def miniprot_result = miniprot(masked_file)
     def annotate_result = annotate(masked_file, bam_files)
-    def stringtie_result = stringtie(star.bams)
+    def stringtie_result = stringtie(star.bams, sample_counts)
     def isoseq_result = isoseq(masked_file, cram_flnc)
     def ingenannot_result = ingenannot(annotate_result.annotations, isoseq_result.collapsed_isoseq, bam_files, bam_indices, miniprot_result.gff_csi, stringtie_result.gff_csi)
 
@@ -139,7 +148,13 @@ workflow {
             tuple(genome_prefix, sample_id, reads)
         }
 
-    def genome_result_ch = genome(genome_prefixes, cram_flnc, rnaseq_pairs)
+    def sample_counts = rnaseq_pairs.groupTuple().map { genome_prefix, sample_id, reads ->
+        tuple(genome_prefix, reads.size())
+    }
+
+    sample_counts.view()
+
+    def genome_result_ch = genome(genome_prefixes, cram_flnc, rnaseq_pairs, sample_counts)
 
     publish:
     masked_genomes = genome_result_ch.masked_genomes

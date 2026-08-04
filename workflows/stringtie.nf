@@ -46,14 +46,22 @@ process sort_bgzip_index_combined_stringtie_transcript {
 workflow stringtie {
     take: 
     star_bams
+    sample_counts
 
     main:
     def bams = star_bams.map { genome, sample, bam, _csi ->
         tuple(genome, sample, bam)
     }
-
     def transcripts = stringtie_assemble(bams)
-    def grouped_transcripts = transcripts.groupTuple()
+    def grouped_transcripts = transcripts
+        .combine(sample_counts, by: 0)
+        .map { genome, gtf, count ->
+            tuple(groupKey(genome, count), gtf)
+        }
+        .groupTuple()
+        .map { gkey, gtfs ->
+            tuple(gkey.toString(), gtfs)
+    }
     def merged = combine_stringtie_transcripts(grouped_transcripts) 
     def sorted = sort_bgzip_index_combined_stringtie_transcript(merged)
 

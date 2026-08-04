@@ -137,9 +137,10 @@ workflow ingenannot {
 
     def select_fof_input = aed_scores_ch
         .map { genome_prefix, label, aed_gff, _plot ->
-            tuple(genome_prefix, "${aed_gff}\t${label}")
+            tuple(groupKey(genome_prefix, 4), "${aed_gff}\t${label}")
         }
         .groupTuple()
+        .map { gkey, lines -> tuple(gkey.getGroupTarget(), lines) }
 
     def selection_process_input = select_fof_input
         .map { genome_prefix, lines ->

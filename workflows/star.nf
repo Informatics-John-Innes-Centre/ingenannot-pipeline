@@ -120,6 +120,7 @@ workflow star {
     take:
     masked_fasta
     rnaseq_pairs
+    sample_counts
 
     main:
     def star_index_ch = star_index(masked_fasta)
@@ -132,13 +133,13 @@ workflow star {
 
     // Collect SJ files belonging to each genome
     def all_sj = first_pass_mapped
-        .map { genome_prefix, sample_id, sj_file ->
-            tuple(genome_prefix, sj_file)
+        .map { genome_prefix, _sample_id, sj_file -> tuple(genome_prefix, sj_file) }
+        .combine(sample_counts, by: 0)
+        .map { genome_prefix, sj_file, count ->
+            tuple(groupKey(genome_prefix, count), sj_file)
         }
         .groupTuple()
-        .map { genome_prefix, sj_files ->
-            tuple(genome_prefix, sj_files.sort { it.name })
-        }
+        .map { gkey, sj_files -> tuple(gkey.toString(), sj_files.sort { it.name }) }
 
     def second_pass_input = first_star_pass_input.combine(all_sj, by: 0)
 
