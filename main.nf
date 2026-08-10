@@ -206,7 +206,7 @@ output {
     }
 
     aed_scores {
-        path { genome_prefix, _aed_gff, _plot ->
+        path { genome_prefix, _label, _aed_gff, _plot ->
             "${genome_prefix}/ingenannot"
         }
     }

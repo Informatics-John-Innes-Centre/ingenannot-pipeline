@@ -85,7 +85,7 @@ process ingenannot_selection_process {
 
 process ingenannot_compare {    
     input:
-    tuple val(genome_prefix), val(compare_file_contents)
+    tuple val(genome_prefix), val(compare_file_contents), file(select_genes_gff)
 
     output:
     tuple val(genome_prefix), path("ingenannot_compare.log")
@@ -147,8 +147,9 @@ workflow ingenannot {
             tuple(genome_prefix, lines.join('\n'))
         }
 
-    def select_output =
-        ingenannot_selection_process(selection_process_input)
+    def select_output = ingenannot_selection_process(selection_process_input)
+
+    def select_genes_gff = select_output.map { genome_prefix, select_genes_gff, _hist -> tuple(genome_prefix, select_genes_gff)}
 
     def comparison_process_input = select_fof_input
         .map { genome_prefix, lines ->
@@ -158,6 +159,7 @@ workflow ingenannot {
                     .join('\n')
             )
         }
+        .join(select_genes_gff)
 
     def ingenannot_compare_log_ch =
         ingenannot_compare(comparison_process_input)

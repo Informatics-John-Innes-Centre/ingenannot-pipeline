@@ -15,3 +15,4 @@ run.sh
 *.slurm
 accession_files.csv
 work-old/
+Thumbs.db
