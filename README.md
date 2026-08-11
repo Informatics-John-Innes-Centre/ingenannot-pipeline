@@ -40,10 +40,11 @@ input
 
 This example has 2 genomes: `genomeA` and `genomeB`. Each genome has a corresponding `.flnc.cram` file. `genomeA` has two rnaseq samples and `genomeB` has just one.
 
-> [!IMPORTANT]  
-> Genomes **must** be `.fasta` files.    
-> RNA-Seq data **must** end in either `-r1.fastq.gz` or `-r2.fastq.gz`.    
-> The Iso-Seq data **must** be `.flnc.cram`.    
+> [!IMPORTANT]
+> The file endings of your input data have to be exact: 
+> * Reference genomes **must** be `.fasta` files.    
+> * RNA-Seq data **must** end in either `-r1.fastq.gz` or `-r2.fastq.gz`.    
+> * The Iso-Seq data **must** be `.flnc.cram`.    
 
 Create a file called `input.csv` in the following format:
 ```
