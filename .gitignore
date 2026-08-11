@@ -1,6 +1,5 @@
 # pixi environments
 .pixi/*
-!.pixi/config.toml
 .nextflow.log*
 work/
 singularity-cache/
@@ -11,7 +10,8 @@ results/
 .pixi/
 work
 resume.sh
-run.sh
+*.sh
+!containers.sh
 *.slurm
 accession_files.csv
 work-old/

@@ -139,7 +139,7 @@ workflow star {
             tuple(groupKey(genome_prefix, count), sj_file)
         }
         .groupTuple()
-        .map { gkey, sj_files -> tuple(gkey.toString(), sj_files.sort { it.name }) }
+        .map { gkey, sj_files -> tuple(gkey.toString(), sj_files.sort { sj -> sj.name }) }
 
     def second_pass_input = first_star_pass_input.combine(all_sj, by: 0)
 

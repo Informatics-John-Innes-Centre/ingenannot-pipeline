@@ -114,7 +114,7 @@ workflow ingenannot {
         .map { genome, bams ->
             tuple(
                 genome,
-                bams.collect { "${it.name}\ttrue\ttrue" }.join('\n')
+                bams.collect { bam -> "${bam.name}\ttrue\ttrue" }.join('\n')
             )
         }
     def isoform_ranking_input = collapsed_isoseq

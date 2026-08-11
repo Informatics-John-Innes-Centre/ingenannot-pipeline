@@ -63,7 +63,7 @@ workflow genome {
         .map { gkey, entries ->
             tuple(
                 gkey.toString(),
-                entries.sort { it[0] }.collect { it[1] }
+                entries.sort { entry -> entry[0] }.collect { entry -> entry[1] }
             )
         }
 
@@ -79,7 +79,7 @@ workflow genome {
         .map { gkey, entries ->
             tuple(
                 gkey.toString(),
-                entries.sort { it[0] }.collect { it[1] }
+                entries.sort { entry -> entry[0] }.collect { entry -> entry[1] }
             )
         }
 
@@ -148,7 +148,7 @@ workflow {
             tuple(genome_prefix, sample_id, reads)
         }
 
-    def sample_counts = rnaseq_pairs.groupTuple().map { genome_prefix, sample_id, reads ->
+    def sample_counts = rnaseq_pairs.groupTuple().map { genome_prefix, _sample_id, reads ->
         tuple(genome_prefix, reads.size())
     }
 
