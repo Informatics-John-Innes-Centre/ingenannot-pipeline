@@ -1,4 +1,6 @@
 process helixer {
+    label 'gpu'
+    
     input:
     tuple val(genome_prefix), path(masked_fasta)
 
@@ -23,6 +25,8 @@ process helixer {
 }
 
 process tiberius {
+    label 'gpu'
+
     input:
     tuple val(genome_prefix), path(masked_fasta)
 
@@ -39,6 +43,8 @@ process tiberius {
 }
 
 process annevo {
+    label 'gpu'
+
     input:
     tuple val(genome_prefix), path(masked_fasta)
 
