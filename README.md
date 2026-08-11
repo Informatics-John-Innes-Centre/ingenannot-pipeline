@@ -5,6 +5,7 @@ A nextflow pipeline for genome annotation. The pipeline requires:
 * A reference genome.
 * Paired-end Illumina RNA-Seq data.
 * PacBio Iso-Seq data.
+* A protein database.
 
 It creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple seperate genomes with their own corresponding data at once.
 
@@ -16,7 +17,8 @@ A recommended way to arrange your input data is to create 3 folders:
 input
 ├── genomes
 ├── isoseq
-└── rnaseq
+├── rnaseq
+└── protein_database.fa
 ```
 
 All the data of each type goes in their corresponding folders. The pipeline will determine which data belongs to which genome by a common prefix. For example:
