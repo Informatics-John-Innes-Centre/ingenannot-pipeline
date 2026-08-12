@@ -9,3 +9,4 @@ version = "0.1.0"
 [dependencies]
 nextflow = ">=26.4.4,<27"
 graphviz = ">=14.1.2,<15"
+apptainer = ">=1.5.3,<2"

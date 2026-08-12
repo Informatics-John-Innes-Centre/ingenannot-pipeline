@@ -4,6 +4,8 @@
 work/
 singularity-cache/
 singularity-cache
+apptainer-cache/
+apptainer-cache
 .nextflow/
 logs/
 results/
