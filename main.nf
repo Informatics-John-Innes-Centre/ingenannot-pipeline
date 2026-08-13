@@ -27,11 +27,18 @@ process softmask {
 }
 
 params {
+    // data inputs
     frozDir
     accessionFile
     proteinDatabase
     fastqDirectory
     isoseqDirectory
+
+    // tool specific configurations
+    helixerLineage
+    tiberiusModel
+    annevoModel
+    annevoLineage
 }
 
 workflow genome {

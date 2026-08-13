@@ -67,9 +67,13 @@ mv /path/to/my/inputs .
 mv /path/to/my/input.csv .
 ```
 
-To install required dependencies you will need to first install the [Pixi](https://github.com/prefix-dev/pixi/) package manager, after which you can install them like so:
+To install required dependencies you will need to first install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **nextflow** and **apptainer**. You opt to use your own installation of apptainer like so (recommended for HPC environments): 
 ```bash
 pixi install
+```
+Or you can include a fresh apptainer installation into the pixi environment (recommended for local execution):
+```bash
+pixi install -e apptainer
 ```
 
 Build all the containers required for the pipeline with the `containers.sh` script (this will take a while):
@@ -78,6 +82,7 @@ Build all the containers required for the pipeline with the `containers.sh` scri
 ```
 
 ### Local
+
 ```bash
 pixi run nextflow run main.nf -profile local \
     --frozDir "/path/to/your/genomes" \
@@ -85,6 +90,10 @@ pixi run nextflow run main.nf -profile local \
     --proteinDatabase "/path/to/your/protein_database.fa" \
     --fastqDirectory "/path/to/your/rnaseq" \
     --isoseqDirectory "/path/to/your/isoseq" \
+    --tiberiusModel "tiberius_model" \
+    --helixerLineage "helixer_lineage" \
+    --annevoModel "annevo_model" \
+    --annevoLineage "annevo_lineage" \
 ```
 ### Slurm
 
@@ -95,6 +104,10 @@ pixi run nextflow run main.nf -profile hpc \
     --proteinDatabase "/path/to/your/protein_database.fa" \
     --fastqDirectory "/path/to/your/rnaseq" \
     --isoseqDirectory "/path/to/your/isoseq" \
+    --tiberiusModel "tiberius_model" \
+    --helixerLineage "helixer_lineage" \
+    --annevoModel "annevo_model" \
+    --annevoLineage "annevo_lineage" \
     --slurm_queue your-queue \
     --slurm_gpu_queue your-queue \
 ```

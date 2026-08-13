@@ -12,9 +12,9 @@ process helixer {
     mkdir -p tmp
     Helixer.py \
         --downloaded-model-path /opt/helixer/models \
-        --lineage land_plant \
+        --lineage ${params.helixerLineage} \
         --fasta-path ${masked_fasta} \
-        --species Pisum \
+        --species ${genome_prefix} \
         --gff-output-path "${genome_prefix}_helixer.gff" \
         --peak-threshold 0.8 \
         --subsequence-length 64152 \
@@ -37,7 +37,7 @@ process tiberius {
     """
     python /opt/Tiberius/tiberius.py \
         --genome ${masked_fasta} \
-        --model /opt/Tiberius/model_weights/angiosperms_softmasking \
+        --model /opt/Tiberius/model_weights/${params.tiberiusModel} \
         --out ${genome_prefix}_tiberius.gtf
     """
 }
@@ -58,9 +58,9 @@ process annevo {
 
     python /opt/ANNEVO/annotation.py \
         --genome ${masked_fasta} \
-        --model_path /opt/ANNEVO/saved_model/ANNEVO_Magnoliopsida.pt \
+        --model_path /opt/ANNEVO/saved_model/${params.annevoModel} \
         --output ${genome_prefix}_annevo.gff \
-        --lineage Magnoliopsida \
+        --lineage ${params.annevoLineage} \
         --threads ${task.cpus} \
         --num_workers ${task.cpus}
     """
