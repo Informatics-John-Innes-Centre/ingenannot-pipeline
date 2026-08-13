@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: debian:13.6
+
+
+%labels
+    Author William Redding
+%files
+    main.nf /opt/pipeline/main.nf
+    workflows /opt/pipeline/workflows
+    nextflow.config /opt/pipeline/nextflow.config
+    containers /opt/pipeline/containers
+    containers.sh /opt/pipeline/containers.sh
+    pixi.lock /opt/pipeline/pixi.lock
+    pixi.toml /opt/pipeline/pixi.toml
+%environment 
+    export PIXI_PROJECT_MANIFEST=/opt/pipeline/pixi.toml
+%post
+    set -e
+    apt-get update
+    apt-get install -y wget vim ca-certificates less which locales-all procps
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+    cd /opt/pipeline
+    wget -qO- https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
+    pixi config set mirrors '{"https://conda.anaconda.org/": ["https://prefix.dev/"]}'
+    pixi install
+    ./containers.sh
+%runscript
+    exec pixi run nextflow run /opt/pipeline/main.nf -c /opt/pipeline/nextflow.config -profile local "$@"

@@ -1,6 +1,7 @@
 # pixi environments
 .pixi/*
 .nextflow.log*
+*.sif
 work/
 singularity-cache/
 singularity-cache
