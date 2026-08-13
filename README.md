@@ -67,11 +67,11 @@ mv /path/to/my/inputs .
 mv /path/to/my/input.csv .
 ```
 
-To install required dependencies you will need to first install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **nextflow** and **apptainer**. You opt to use your own installation of apptainer like so (recommended for HPC environments): 
+To install required dependencies you will need to first install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **nextflow** and **apptainer**. You can opt to use your own installation of apptainer like so (recommended for **HPC environments): 
 ```bash
 pixi install
 ```
-Or you can include a fresh apptainer installation into the pixi environment (recommended for local execution):
+Or you can include apptainer in the pixi environment (recommended for **local** execution):
 ```bash
 pixi install -e apptainer
 ```
