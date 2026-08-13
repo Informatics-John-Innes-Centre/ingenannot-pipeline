@@ -58,6 +58,7 @@ genomeB,genomeB,genomeB
 Each row is a seperate genome. It is worth noting that the prefixes are unique to each type of data and therefore, **do not have to be the same**.
 
 ## Running
+
 Clone the repository and move your inputs (input data and CSV file) into it:
 
 ```bash
@@ -67,13 +68,35 @@ mv /path/to/my/inputs .
 mv /path/to/my/input.csv .
 ```
 
-To install required dependencies you will need to first install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **nextflow** and **apptainer**. You can opt to use your own installation of apptainer like so (recommended for **HPC environments): 
+### The Gigacontainer
+
+If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a apptainer container that comes with nextflow, apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
+
 ```bash
-pixi install
+apptainer build gigacontainer.sif gigacontainer.def
+
+apptainer run gigacontainer.sif \
+    --frozDir "/path/to/your/genomes" \
+    --accessionFile "/path/to/your/input.csv" \
+    --proteinDatabase "/path/to/your/protein_database.fa" \
+    --fastqDirectory "/path/to/your/rnaseq" \
+    --isoseqDirectory "/path/to/your/isoseq" \
+    --tiberiusModel "tiberius_model" \
+    --helixerLineage "helixer_lineage" \
+    --annevoModel "annevo_model" \
+    --annevoLineage "annevo_lineage" \
+```
+
+### Manual Setup
+
+To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of apptainer like so (recommended for **HPC environments): 
+
+```bash
+pixi install # just installs nextflow
 ```
 Or you can include apptainer in the pixi environment (recommended for **local** execution):
 ```bash
-pixi install -e apptainer
+pixi install -e apptainer # installs nextflow and apptainer!
 ```
 
 Build all the containers required for the pipeline with the `containers.sh` script (this will take a while):
@@ -81,7 +104,7 @@ Build all the containers required for the pipeline with the `containers.sh` scri
 ./containers.sh
 ```
 
-### Local
+#### Local
 
 ```bash
 pixi run nextflow run main.nf -profile local \
@@ -95,7 +118,7 @@ pixi run nextflow run main.nf -profile local \
     --annevoModel "annevo_model" \
     --annevoLineage "annevo_lineage" \
 ```
-### Slurm
+#### Slurm
 
 ```bash
 pixi run nextflow run main.nf -profile hpc \
