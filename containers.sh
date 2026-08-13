@@ -7,7 +7,6 @@ mkdir -p apptainer-cache
 pixi run apptainer build apptainer-cache/bedtools.sif containers/bedtools.def
 pixi run apptainer build apptainer-cache/helixer.sif containers/helixer.def
 pixi run apptainer build apptainer-cache/annevo.sif containers/annevo.def
-pixi run apptainer build apptainer-cache/tiberius-1.1.8.sif containers/tiberius-1.1.8.def
 pixi run apptainer build apptainer-cache/tiberius-2.0.6.sif containers/tiberius-2.0.6.def
 pixi run apptainer build apptainer-cache/miniprot.sif containers/miniprot.def
 pixi run apptainer build apptainer-cache/cutadapt.sif containers/cutadapt.def
