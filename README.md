@@ -89,7 +89,7 @@ apptainer run gigacontainer.sif \
 
 ### Manual Setup
 
-To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of apptainer like so (recommended for **HPC environments): 
+To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of apptainer like so (recommended for **HPC** environments): 
 
 ```bash
 pixi install # just installs nextflow
