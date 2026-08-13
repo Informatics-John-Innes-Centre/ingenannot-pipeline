@@ -94,7 +94,7 @@ To install the required dependencies you will first need to install the [Pixi](h
 ```bash
 pixi install # just installs nextflow
 ```
-Or you can include apptainer in the pixi environment (recommended for **local** execution):
+Or you can include Apptainer in the pixi environment (recommended for **local** execution):
 ```bash
 pixi install -e apptainer # installs nextflow and apptainer!
 ```
