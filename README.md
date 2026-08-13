@@ -68,7 +68,7 @@ mv /path/to/my/inputs .
 mv /path/to/my/input.csv .
 ```
 
-### The Gigacontainer
+### The GIGACONTAINER
 
 If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a apptainer container that comes with nextflow, apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
 
