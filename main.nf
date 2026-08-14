@@ -102,6 +102,7 @@ workflow genome {
     annotations = annotate_result.annotations
     star_bams = star.bams
     long_read_bams = isoseq_result.long_read_bams
+    collapsed_isoseq = isoseq_result.collapsed_isoseq
     miniprot = miniprot_result.gff_csi
     stringtie = stringtie_result.gff_csi
     aed_scores = ingenannot_result.aed_scores
@@ -167,6 +168,7 @@ workflow {
     annotations = genome_result_ch.annotations
     star_bams = genome_result_ch.star_bams
     long_read_bams = genome_result_ch.long_read_bams
+    collapsed_isoseq = genome_result_ch.collapsed_isoseq
     miniprot = genome_result_ch.miniprot
     stringtie = genome_result_ch.stringtie
     aed_scores = genome_result_ch.aed_scores
@@ -197,6 +199,12 @@ output {
     long_read_bams {
         path { genome_prefix, _sample, _bam, _csi ->
             "${genome_prefix}/long_read_bams"
+        }
+    }
+
+    collapsed_isoseq {
+        path { genome_prefix, _file ->
+            "${genome_prefix}/collapsed_isoseq"
         }
     }
 
