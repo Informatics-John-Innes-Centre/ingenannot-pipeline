@@ -160,8 +160,6 @@ workflow {
         tuple(genome_prefix, reads.size())
     }
 
-    sample_counts.view()
-
     def genome_result_ch = genome(genome_prefixes, cram_flnc, rnaseq_pairs, sample_counts)
 
     publish:
