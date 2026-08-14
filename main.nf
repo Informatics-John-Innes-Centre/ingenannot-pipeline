@@ -101,6 +101,7 @@ workflow genome {
     masked_genomes      = masked_file
     annotations = annotate_result.annotations
     star_bams = star.bams
+    long_read_bams = isoseq_result.long_read_bams
     miniprot = miniprot_result.gff_csi
     stringtie = stringtie_result.gff_csi
     aed_scores = ingenannot_result.aed_scores
@@ -167,6 +168,7 @@ workflow {
     masked_genomes = genome_result_ch.masked_genomes
     annotations = genome_result_ch.annotations
     star_bams = genome_result_ch.star_bams
+    long_read_bams = genome_result_ch.long_read_bams
     miniprot = genome_result_ch.miniprot
     stringtie = genome_result_ch.stringtie
     aed_scores = genome_result_ch.aed_scores
@@ -191,6 +193,12 @@ output {
     star_bams {
         path { genome_prefix, _sample, _bam, _csi ->
             "${genome_prefix}/star_mappings"
+        }
+    }
+
+    long_read_bams {
+        path { genome_prefix, _sample, _bam, _csi ->
+            "${genome_prefix}/long_read_bams"
         }
     }
 

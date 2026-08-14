@@ -84,4 +84,5 @@ workflow isoseq {
 
     emit:
     collapsed_isoseq = collapsed_isoseq_ch
+    long_read_bams = aligned_isoseq
 }
