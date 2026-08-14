@@ -1,5 +1,121 @@
 # Ingenannot Pipeline
 
+```mermaid
+flowchart TB
+    subgraph " "
+    v0["channel.fromPath"]
+    v5["channel.fromFilePairs"]
+    end
+    subgraph "genome [genome]"
+    v16(["softmask"])
+    subgraph "genome:star [star]"
+    v17(["star_index"])
+    v18(["trim_rnaseq_data"])
+    v20(["star_map_rnaseq_data_first_pass"])
+    v27(["star_map_rnaseq_data_second_pass"])
+    v28(["samtools_index"])
+    v19(( ))
+    end
+    subgraph "genome:miniprot [miniprot]"
+    v39(["miniprot_alignment"])
+    v40(["sort_bgzip_index_miniprot_mappings"])
+    end
+    subgraph "genome:annotate [annotate]"
+    v41(["helixer"])
+    v42(["tiberius"])
+    v43(["annevo"])
+    v45(["braker3"])
+    v49(["ingenannot_validate_annotation"])
+    v44(( ))
+    v46(( ))
+    end
+    subgraph "genome:stringtie [stringtie]"
+    v51(["stringtie_assemble"])
+    v56(["combine_stringtie_transcripts"])
+    v57(["sort_bgzip_index_combined_stringtie_transcript"])
+    v50(( ))
+    v52(( ))
+    end
+    subgraph "genome:isoseq [isoseq]"
+    v58(["create_masked_fasta_minimap_index"])
+    v59(["convert_cram_flnc_to_bam"])
+    v61(["align_isoseq_reads_to_genome"])
+    v62(["collapse_isoseq"])
+    v60(( ))
+    end
+    subgraph "genome:ingenannot [ingenannot]"
+    v67(["isoform_ranking"])
+    v68(["sort_bgzip_index_top_isoforms"])
+    v72(["compute_aed_score_for_annotation"])
+    v77(["ingenannot_selection_process"])
+    v81(["ingenannot_compare"])
+    v63(( ))
+    v69(( ))
+    v73(( ))
+    end
+    v15(( ))
+    v29(( ))
+    v34(( ))
+    end
+    v1(( ))
+    v0 --> v1
+    v5 --> v1
+    v15 --> v16
+    v16 --> v17
+    v16 --> v39
+    v16 --> v41
+    v16 --> v42
+    v16 --> v43
+    v16 --> v58
+    v16 --> v44
+    v17 --> v19
+    v1 --> v18
+    v18 --> v19
+    v19 --> v20
+    v20 --> v19
+    v19 --> v27
+    v27 --> v28
+    v28 --> v29
+    v28 --> v34
+    v28 --> v50
+    v39 --> v40
+    v40 --> v69
+    v41 --> v46
+    v42 --> v46
+    v43 --> v46
+    v44 --> v45
+    v45 --> v46
+    v46 --> v49
+    v49 --> v69
+    v50 --> v51
+    v51 --> v52
+    v52 --> v56
+    v56 --> v57
+    v57 --> v69
+    v58 --> v60
+    v1 --> v59
+    v59 --> v60
+    v60 --> v61
+    v61 --> v62
+    v62 --> v63
+    v63 --> v67
+    v67 --> v68
+    v68 --> v69
+    v69 --> v72
+    v72 --> v73
+    v73 --> v77
+    v77 --> v73
+    v73 --> v81
+    v1 --> v15
+    v1 --> v19
+    v1 --> v29
+    v1 --> v34
+    v1 --> v52
+    v29 --> v44
+    v29 --> v63
+    v34 --> v63
+```
+
 ## Overview 
 A nextflow pipeline for genome annotation. The pipeline requires:
 * A reference genome.
