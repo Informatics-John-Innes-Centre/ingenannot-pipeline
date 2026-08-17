@@ -195,7 +195,9 @@ mv /path/to/my/inputs .
 mv /path/to/my/input.csv .
 ```
 
-### Via "The GIGACONTAINER"
+There are then two methods to run the pipeline.
+
+### Method 1 - The GIGACONTAINER
 
 If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is an Apptainer container that comes with nextflow, Apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
 
@@ -214,7 +216,7 @@ apptainer run gigacontainer.sif \
     --annevoLineage "annevo_lineage" \
 ```
 
-### Manual Setup
+### Method 2 - Manual Setup
 
 To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of Apptainer like so (recommended for **HPC** environments): 
 
