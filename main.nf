@@ -197,7 +197,7 @@ output {
     }
 
     long_read_bams {
-        path { genome_prefix, _sample, _bam, _csi ->
+        path { genome_prefix, _file->
             "${genome_prefix}/long_read_bams"
         }
     }
