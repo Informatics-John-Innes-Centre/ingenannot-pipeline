@@ -186,7 +186,7 @@ mv /path/to/my/input.csv .
 
 ### The GIGACONTAINER
 
-If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a apptainer container that comes with nextflow, apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
+If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is an Apptainer container that comes with nextflow, Apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
 
 ```bash
 apptainer build gigacontainer.sif gigacontainer.def
@@ -205,7 +205,7 @@ apptainer run gigacontainer.sif \
 
 ### Manual Setup
 
-To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of apptainer like so (recommended for **HPC** environments): 
+To install the required dependencies you will first need to install the [Pixi](https://github.com/prefix-dev/pixi/) package manager. This pipeline requires **Nextflow** and **Apptainer**. You can opt to use your own pre-existing installation of Apptainer like so (recommended for **HPC** environments): 
 
 ```bash
 pixi install # just installs nextflow
