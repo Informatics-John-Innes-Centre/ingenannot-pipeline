@@ -120,7 +120,7 @@ flowchart TB
 A nextflow pipeline for genome annotation. The pipeline requires:
 * A reference genome.
 * Paired-end Illumina RNA-Seq data.
-* PacBio Iso-Seq data.
+* PacBio Iso-Seq data **(optional)**.
 * A protein database.
 
 It creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple seperate genomes with their own corresponding data at once.
@@ -172,6 +172,13 @@ genomeB,genomeB,genomeB
 ```
 
 Each row is a seperate genome. It is worth noting that the prefixes are unique to each type of data and therefore, **do not have to be the same**.
+
+> [!NOTE]
+> If you do not provide PacBio Iso-Seq data, do not provide an `isoseq_prefix`, for example:
+> ```
+> genome_prefix,illumina_prefix,isoseq_prefix
+> genomeA,genomeA
+> ```
 
 ## Running
 
