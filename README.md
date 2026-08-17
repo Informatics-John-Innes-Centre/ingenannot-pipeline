@@ -174,7 +174,7 @@ genomeB,genomeB,genomeB
 Each row is a seperate genome. It is worth noting that the prefixes are unique to each type of data and therefore, **do not have to be the same**.
 
 > [!NOTE]
-> If you do not provide PacBio Iso-Seq data, do not provide an `isoseq_prefix`, for example:
+> If you do not provide PacBio Iso-Seq data, do not provide an `isoseq_prefix`. For example:
 > ```
 > genome_prefix,illumina_prefix,isoseq_prefix
 > genomeA,genomeA
