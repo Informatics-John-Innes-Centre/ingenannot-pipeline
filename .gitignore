@@ -18,4 +18,6 @@ resume.sh
 *.slurm
 accession_files.csv
 work-old/
+inputs/
+*.csv.bak
 Thumbs.db

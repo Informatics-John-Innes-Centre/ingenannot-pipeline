@@ -39,21 +39,43 @@ process compute_aed_score_for_annotation {
     tuple val(genome_prefix), val(label), path("${genome_prefix}_${label}.aed.gff"), path("scatter_hist_aed.${label}.png")
 
     script:
+    def command = ""
+    if (top_isoforms_gff) {
+        command = """
+        ingenannot -v 2 -p ${task.cpus} \
+            aed \
+            ${annotation} \
+            ${genome_prefix}_${label}.aed.gff \
+            ${label} \
+            ${stringtie_gff} \
+            ${miniprot_gff} \
+            --longreads ${top_isoforms_gff} \
+            --longreads_source "PacBio" \
+            --evtrstranded \
+            --penalty_overflow 0.2 \
+            --aed_tr_cds_only \
+            --evtr_source "stringtie" \
+            --evpr_source "miniprot"
+        """
+    } else {
+        command = """
+        ingenannot -v 2 -p ${task.cpus} \
+            aed \
+            ${annotation} \
+            ${genome_prefix}_${label}.aed.gff \
+            ${label} \
+            ${stringtie_gff} \
+            ${miniprot_gff} \
+            --evtrstranded \
+            --penalty_overflow 0.2 \
+            --aed_tr_cds_only \
+            --evtr_source "stringtie" \
+            --evpr_source "miniprot"
+        """
+    }
+
     """
-    ingenannot -v 2 -p ${task.cpus} \
-        aed \
-        ${annotation} \
-        ${genome_prefix}_${label}.aed.gff \
-        ${label} \
-        ${stringtie_gff} \
-        ${miniprot_gff} \
-        --longreads ${top_isoforms_gff} \
-        --evtrstranded \
-        --longreads_source "PacBio" \
-        --penalty_overflow 0.2 \
-        --aed_tr_cds_only \
-        --evtr_source "stringtie" \
-        --evpr_source "miniprot"
+    ${command}
     """
 }
 
@@ -101,6 +123,7 @@ process ingenannot_compare {
 
 workflow ingenannot {
     take:
+    genome_prefixes
     annotations
     collapsed_isoseq
     bam_files
@@ -127,10 +150,25 @@ workflow ingenannot {
     def top_isoforms_gff_csi_ch =
         sort_bgzip_index_top_isoforms(top_isoforms)
 
+    def top_isoforms_optional = genome_prefixes
+        .map { genome -> tuple(genome, [], []) }
+
+    def optional_top_isoforms_gff_csi_ch = top_isoforms_optional
+        .join(top_isoforms_gff_csi_ch, by: 0, remainder: true)
+        .map { row ->
+            if (row[-1] == null) {
+                // No matching top isoforms
+                tuple(row[0], row[1], row[2])
+            } else {
+                // Matching top isoforms found
+                tuple(row[0], row[3], row[4])
+            }
+        }
+
     def aed_input = annotations
         .combine(miniprot_gff_csi, by: 0)
         .combine(stringtie_gff_csi, by: 0)
-        .combine(top_isoforms_gff_csi_ch, by: 0)
+        .combine(optional_top_isoforms_gff_csi_ch, by: 0)
 
     def aed_scores_ch =
         compute_aed_score_for_annotation(aed_input)

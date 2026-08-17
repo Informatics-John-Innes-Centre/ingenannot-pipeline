@@ -94,7 +94,7 @@ workflow genome {
     def annotate_result = annotate(masked_file, bam_files)
     def stringtie_result = stringtie(star.bams, sample_counts)
     def isoseq_result = isoseq(masked_file, cram_flnc)
-    def ingenannot_result = ingenannot(annotate_result.annotations, isoseq_result.collapsed_isoseq, bam_files, bam_indices, miniprot_result.gff_csi, stringtie_result.gff_csi)
+    def ingenannot_result = ingenannot(genome_prefixes, annotate_result.annotations, isoseq_result.collapsed_isoseq, bam_files, bam_indices, miniprot_result.gff_csi, stringtie_result.gff_csi)
 
     
     emit:
@@ -130,6 +130,7 @@ workflow {
 
     // get isoseq cram files
     def cram_flnc = rows
+        .filter { _genome_prefix, _illumina_prefix, isoseq_prefix -> isoseq_prefix && isoseq_prefix != ""}
         .map { genome_prefix, _illumina_prefix, isoseq_prefix ->
             tuple(
                 genome_prefix,
