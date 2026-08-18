@@ -128,7 +128,18 @@ The pipeline creates annotations using 4 core annotators: [ANNEVO](https://githu
 
 ## Preparing Input Data
 
-A recommended way to arrange your input data is to create 3 folders:
+The pipeline requires an `input.csv`, which looks like this:
+
+```
+genome_prefix,illumina_prefix,isoseq_prefix
+genomeA,illuminaA,isoseqA
+genomeB,illuminaB,isoseqB
+```
+
+> [!NOTE]
+> If you do not want to provide PacBio Iso-Seq data for a specific genome, leave `isoseq_prefix` blank for that row.
+
+Each row in this file is a separate genome to annotate. The pipeline determines which input data belongs to which genome by these prefixes. A recommended way to provide your input data is using this folder structure:
 
 ```bash
 input
@@ -138,7 +149,7 @@ input
 └── protein_database.fa
 ```
 
-All the data of each type goes in their corresponding folders. The pipeline will determine which data belongs to which genome by a common prefix. For example:
+All data of each type goes in their corresponding folders. For example:
 
 ```bash
 input
@@ -148,18 +159,18 @@ input
 │   ├── genomeB.fasta
 │   └── genomeB_all_repeats.bed
 ├── isoseq
-│   ├── genomeA.flnc.cram
-│   └── genomeB.flnc.cram
+│   ├── isoseqA.flnc.cram
+│   └── isoseqB.flnc.cram
 └── rnaseq
-    ├── genomeA-sample1-r1.fastq.gz
-    ├── genomeA-sample1-r2.fastq.gz
-    ├── genomeA-sample2-r1.fastq.gz
-    ├── genomeA-sample2-r2.fastq.gz
-    ├── genomeB-sample1-r1.fastq.gz
-    └── genomeB-sample1-r2.fastq.gz
+    ├── illuminaA-sample1-r1.fastq.gz
+    ├── illuminaA-sample1-r2.fastq.gz
+    ├── illuminaA-sample2-r1.fastq.gz
+    ├── illuminaA-sample2-r2.fastq.gz
+    ├── illuminaB-sample1-r1.fastq.gz
+    └── illuminaB-sample1-r2.fastq.gz
 ```
 
-This example has 2 genomes: `genomeA` and `genomeB`. Each genome has a corresponding `.flnc.cram` file. `genomeA` has two rnaseq samples and `genomeB` has just one.
+This example has two genomes: `genomeA` and `genomeB`. Each genome has a corresponding `.flnc.cram` file. `genomeA` has two rnaseq samples and `genomeB` has just one.
 
 > [!IMPORTANT]
 > The file endings of your input data have to be exact: 
@@ -167,22 +178,6 @@ This example has 2 genomes: `genomeA` and `genomeB`. Each genome has a correspon
 > * The repeat mask BED file **must** be of the format `{genome_prefix}_all_repeats.bed`.
 > * RNA-Seq data **must** end in either `-r1.fastq.gz` or `-r2.fastq.gz`.    
 > * The Iso-Seq data **must** end with `.flnc.cram`, if provided.    
-
-Create a file called `input.csv` in the following format:
-```
-genome_prefix,illumina_prefix,isoseq_prefix
-genomeA,genomeA,genomeA
-genomeB,genomeB,genomeB
-```
-
-Each row is a seperate genome. It is worth noting that the prefixes are unique to each type of data and therefore, **do not have to be the same**.
-
-> [!NOTE]
-> If you do not provide PacBio Iso-Seq data, do not provide an `isoseq_prefix`. For example:
-> ```
-> genome_prefix,illumina_prefix,isoseq_prefix
-> genomeA,genomeA
-> ```
 
 ## Running
 
@@ -199,7 +194,7 @@ There are then two methods to run the pipeline.
 
 ### Method 1 - The GIGACONTAINER
 
-If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is an Apptainer container that comes with nextflow, Apptainer and all the containers required for the pipeline's execution preinstalled. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
+If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a container that comes with every needed to run the pipeline pre-installed. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
 
 ```bash
 apptainer build gigacontainer.sif gigacontainer.def
