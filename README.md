@@ -124,7 +124,7 @@ A nextflow pipeline for genome annotation. The pipeline requires:
 * PacBio Iso-Seq data **(optional)**.
 * A protein database.
 
-It creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple seperate genomes with their own corresponding data at once.
+The pipeline creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple separate genomes with their own corresponding data at once.
 
 ## Preparing Input Data
 
@@ -191,7 +191,7 @@ Clone the repository and move your inputs (input data and CSV file) into it:
 ```bash
 git clone github.com/Informatics-John-Innes-Centre/ingenannot-pipeline
 cd ingenannot-pipeline
-mv /path/to/my/inputs .
+mv /path/to/my/input .
 mv /path/to/my/input.csv .
 ```
 
@@ -233,7 +233,7 @@ Build all the containers required for the pipeline with the `containers.sh` scri
 ./containers.sh
 ```
 
-#### Local
+#### Run locally
 
 ```bash
 pixi run nextflow run main.nf -profile local \
@@ -247,7 +247,7 @@ pixi run nextflow run main.nf -profile local \
     --annevoModel "annevo_model" \
     --annevoLineage "annevo_lineage" \
 ```
-#### Slurm
+#### Run on a SLURM cluster
 
 ```bash
 pixi run nextflow run main.nf -profile hpc \
