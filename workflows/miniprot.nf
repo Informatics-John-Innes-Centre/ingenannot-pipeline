@@ -1,6 +1,6 @@
 process miniprot_alignment  {
     input:
-    tuple val(genome_prefix), path(masked_fasta)
+    tuple val(genome_prefix), path(masked_fasta), path(proteinDatabase)
 
     output:
     tuple val(genome_prefix), path("${genome_prefix}_miniprot.gff3")
@@ -15,7 +15,7 @@ process miniprot_alignment  {
     miniprot \
         -t ${task.cpus} \
         ${genome_prefix}_masked.mpi  \
-        ${params.proteinDatabase} \
+        ${proteinDatabase} \
         --gff \
         > ${genome_prefix}_miniprot.gff3
     """
@@ -39,9 +39,11 @@ process sort_bgzip_index_miniprot_mappings {
 workflow miniprot {
     take:
     masked_fasta
+    protein_databases
 
     main:
-    def miniprot_ch = miniprot_alignment(masked_fasta)
+    def miniprot_input = masked_fasta.join(protein_databases)
+    def miniprot_ch = miniprot_alignment(miniprot_input)
     def sorted_miniprot_gff_csi = sort_bgzip_index_miniprot_mappings(miniprot_ch)
     
     emit:

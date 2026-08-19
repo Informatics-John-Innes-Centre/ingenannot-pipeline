@@ -68,7 +68,7 @@ process annevo {
 
 process braker3 {    
     input:
-    tuple val(genome_prefix), path(masked_fasta), path(bam_files)
+    tuple val(genome_prefix), path(masked_fasta), path(proteinDatabase), path(bam_files)
 
     output:
     tuple val(genome_prefix), val("braker3"), path("braker.gff3")
@@ -78,7 +78,7 @@ process braker3 {
     cp -r /opt/Augustus/config ./augustus_config
     export AUGUSTUS_CONFIG_PATH=\$PWD/augustus_config
     braker.pl \
-    --prot_seq=${params.proteinDatabase} \
+    --prot_seq=${proteinDatabase} \
     --genome=${masked_fasta} \
     --bam=${bam_files.join(',')} \
     --threads=${task.cpus} \
@@ -106,6 +106,7 @@ process ingenannot_validate_annotation {
 workflow annotate {
     take:
     masked_file
+    protein_databases
     bam_files
 
     main:
@@ -113,7 +114,7 @@ workflow annotate {
     def tiberius_annotation_ch = tiberius(masked_file)
     def annevo_annotation_ch = annevo(masked_file)
 
-    def braker3_annotation_ch = braker3(masked_file.join(bam_files))
+    def braker3_annotation_ch = braker3(masked_file.join(protein_databases).join(bam_files))
 
     def all_annotations = helixer_annotation_ch
         .mix(tiberius_annotation_ch)
