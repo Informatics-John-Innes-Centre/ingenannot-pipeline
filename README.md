@@ -200,11 +200,11 @@ If you have **Apptainer** already installed, you can use **The GIGACONTAINER** w
 apptainer build gigacontainer.sif gigacontainer.def
 
 apptainer run gigacontainer.sif \
-    --frozDir "/path/to/your/genomes" \
-    --accessionFile "/path/to/your/input.csv" \
+    --genomes "/path/to/your/genomes" \
+    --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
-    --fastqDirectory "/path/to/your/rnaseq" \
-    --isoseqDirectory "/path/to/your/isoseq" \
+    --rnaseq "/path/to/your/rnaseq" \
+    --isoseq "/path/to/your/isoseq" \
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
     --annevoModel "annevo_model" \
@@ -232,11 +232,11 @@ Build all the containers required for the pipeline with the `containers.sh` scri
 
 ```bash
 pixi run nextflow run main.nf -profile local \
-    --frozDir "/path/to/your/genomes" \
-    --accessionFile "/path/to/your/input.csv" \
+    --genomes "/path/to/your/genomes" \
+    --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
-    --fastqDirectory "/path/to/your/rnaseq" \
-    --isoseqDirectory "/path/to/your/isoseq" \
+    --rnaseq "/path/to/your/rnaseq" \
+    --isoseq "/path/to/your/isoseq" \
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
     --annevoModel "annevo_model" \
@@ -246,11 +246,11 @@ pixi run nextflow run main.nf -profile local \
 
 ```bash
 pixi run nextflow run main.nf -profile hpc \
-    --frozDir "/path/to/your/genomes" \
-    --accessionFile "/path/to/your/input.csv" \
+    --genomes "/path/to/your/genomes" \
+    --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
-    --fastqDirectory "/path/to/your/rnaseq" \
-    --isoseqDirectory "/path/to/your/isoseq" \
+    --rnaseq "/path/to/your/rnaseq" \
+    --isoseq "/path/to/your/isoseq" \
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
     --annevoModel "annevo_model" \

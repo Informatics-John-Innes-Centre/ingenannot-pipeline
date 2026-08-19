@@ -100,7 +100,7 @@ process ingenannot_selection_process {
         --use_ev_lg \
         --min_cds_len 100 \
         --no_partial \
-        --genome ${params.frozDir}/${genome_prefix}/${genome_prefix}.fasta \
+        --genome ${params.genomes}/${genome_prefix}/${genome_prefix}.fasta \
         --no_cds_overlap
     """
 }

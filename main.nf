@@ -28,11 +28,11 @@ process softmask {
 
 params {
     // data inputs
-    frozDir
-    accessionFile
+    csv
+    genomes
+    rnaseq
+    isoseq
     proteinDatabase
-    fastqDirectory
-    isoseqDirectory
 
     // tool specific configurations
     helixerLineage
@@ -53,8 +53,8 @@ workflow genome {
     def softmasking_input = genome_prefixes.map{ genome_prefix -> 
         tuple(
             genome_prefix, 
-            file("${params.frozDir}/${genome_prefix}/${genome_prefix}.fasta"), 
-            file("${params.frozDir}/${genome_prefix}/${genome_prefix}_all_repeats.bed"))
+            file("${params.genomes}/${genome_prefix}/${genome_prefix}.fasta"), 
+            file("${params.genomes}/${genome_prefix}/${genome_prefix}_all_repeats.bed"))
     }
     def masked_file = softmask(softmasking_input)    
     def star = star(masked_file, rnaseq_pairs, sample_counts)
@@ -116,7 +116,7 @@ workflow {
     main:
     // READ the csv file
     channel
-        .fromPath(params.accessionFile)
+        .fromPath(params.csv)
         .splitCsv(header: true)
         .map { r ->
             tuple(
@@ -139,13 +139,13 @@ workflow {
         .map { genome_prefix, _illumina_prefix, isoseq_prefix ->
             tuple(
                 genome_prefix,
-                file("${params.isoseqDirectory}/${isoseq_prefix}.flnc.cram")
+                file("${params.isoseq}/${isoseq_prefix}.flnc.cram")
             )
         }
 
     // Find the rnaseq pairs
     def rnaseq_files = channel
-        .fromFilePairs("${params.fastqDirectory}/*-r{1,2}.fastq.gz")
+        .fromFilePairs("${params.rnaseq}/*-r{1,2}.fastq.gz")
         .map { sample_id, reads ->
             tuple(sample_id, reads)
         }
