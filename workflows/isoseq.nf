@@ -66,6 +66,22 @@ process collapse_isoseq {
     """
 }
 
+process sort_bgzip_index_collapsed_isoseq {
+    input:
+    tuple val(genome_prefix), path(collapsed_isoseq)
+
+    output:
+    tuple val(genome_prefix), path("${genome_prefix}_lr_raw_sorted.gff.gz"), path("${genome_prefix}_lr_raw_sorted.gff.gz.csi")
+
+    script:
+    """
+    sort -k1,1 -k4g,4 \
+        ${collapsed_isoseq} | \
+        bgzip -c --threads ${task.cpus} - > ${genome_prefix}_lr_raw_sorted.gff.gz
+    tabix -C -p gff ${genome_prefix}_lr_raw_sorted.gff.gz
+    """
+}
+
 workflow isoseq {
     take: 
     masked_file
@@ -82,7 +98,10 @@ workflow isoseq {
     
     def collapsed_isoseq_ch = collapse_isoseq(aligned_isoseq)
 
+    def sorted_isoseq_ch = sort_bgzip_index_collapsed_isoseq(collapsed_isoseq_ch)
+
     emit:
+    sorted_isoseq = sorted_isoseq_ch
     collapsed_isoseq = collapsed_isoseq_ch
     long_read_bams = aligned_isoseq
 }
