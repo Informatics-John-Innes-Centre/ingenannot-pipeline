@@ -22,7 +22,7 @@ From: debian:13.6
     cd /opt/pipeline
     wget -qO- https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
     pixi config set mirrors '{"https://conda.anaconda.org/": ["https://prefix.dev/"]}'
-    pixi install
+    pixi install -e apptainer
     ./containers.sh
 %runscript
-    exec pixi run nextflow run /opt/pipeline/main.nf -c /opt/pipeline/nextflow.config -profile local "$@"
+    exec pixi run -e apptainer nextflow run /opt/pipeline/main.nf -c /opt/pipeline/nextflow.config -profile local "$@"
