@@ -194,7 +194,7 @@ There are then two methods to run the pipeline.
 
 ### Method 1 - The GIGACONTAINER
 
-If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a container that comes with every needed to run the pipeline pre-installed. It is important that you always refer to it as **The GIGACONTAINER** when referencing it (it is around 70GB).
+If you have **Apptainer** already installed, you can use **The GIGACONTAINER** which is a container that comes with every needed to run the pipeline pre-installed.
 
 ```bash
 apptainer build gigacontainer.sif gigacontainer.def
