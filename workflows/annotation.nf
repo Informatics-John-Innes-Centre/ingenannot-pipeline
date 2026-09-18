@@ -56,9 +56,9 @@ process annevo {
     export NUMBA_CACHE_DIR="\$PWD/.numba_cache"
     mkdir -p "\$NUMBA_CACHE_DIR"
 
-    python /opt/ANNEVO/annotation.py \
+    annotation.py \
         --genome ${masked_fasta} \
-        --model_path /opt/ANNEVO/saved_model/${params.annevoModel} \
+        --model_path /usr/local/share/annevo-2.3.2/saved_model/${params.annevoModel} \
         --output ${genome_prefix}_annevo.gff \
         --lineage ${params.annevoLineage} \
         --threads ${task.cpus} \

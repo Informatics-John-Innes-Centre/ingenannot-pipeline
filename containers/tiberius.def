@@ -1,0 +1,5 @@
+BootStrap: docker
+From: larsgabriel23/tiberius:2.0.6
+
+%post
+wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/angiosperms_softmasking.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights

@@ -28,7 +28,6 @@ process trim_rnaseq_data {
     cutadapt \
         --cores ${task.cpus} \
         -m 75:75 \
-        --nextseq-trim 20 \
         -a "ACTGTCTCTTATACACATCT" \
         -A "ACTGTCTCTTATACACATCT" \
         -o "trimmed-${reads[0]}" \

@@ -53,8 +53,8 @@ workflow genome {
     def softmasking_input = genome_prefixes.map{ genome_prefix -> 
         tuple(
             genome_prefix, 
-            file("${params.genomes}/${genome_prefix}/${genome_prefix}.fasta"), 
-            file("${params.genomes}/${genome_prefix}/${genome_prefix}_all_repeats.bed"))
+            file("${params.genomes}/${genome_prefix}.fasta"), 
+            file("${params.genomes}/${genome_prefix}_all_repeats.bed"))
     }
     def masked_file = softmask(softmasking_input)    
     def star = star(masked_file, rnaseq_pairs, sample_counts)
@@ -95,7 +95,7 @@ workflow genome {
     def annotate_result = annotate(masked_file, protein_databases, bam_files)
     def stringtie_result = stringtie(star.bams, sample_counts)
     def isoseq_result = isoseq(masked_file, cram_flnc)
-    def ingenannot_result = ingenannot(genome_prefixes, annotate_result.annotations, isoseq_result.collapsed_isoseq, bam_files, bam_indices, miniprot_result.gff_csi, stringtie_result.gff_csi)
+    def ingenannot_result = ingenannot(genome_prefixes, masked_file, annotate_result.annotations, isoseq_result.collapsed_isoseq, bam_files, bam_indices, miniprot_result.gff_csi, stringtie_result.gff_csi)
 
     
     emit:
@@ -130,7 +130,7 @@ workflow {
     def genome_prefixes = rows.map { genome_prefix, _illumina_prefix, _isoseq_prefix -> genome_prefix }
 
     def protein_databases = genome_prefixes.map { genome_prefix -> 
-        tuple(genome_prefix, params.proteinDatabase)
+        tuple(genome_prefix, file(params.proteinDatabase))
     }
 
     // get isoseq cram files

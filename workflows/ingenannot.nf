@@ -81,13 +81,19 @@ process compute_aed_score_for_annotation {
 
 process ingenannot_selection_process {
     input:
-    tuple val(genome_prefix), val(select_file_contents)
+    tuple val(genome_prefix), path(masked_genome), val(labels), path(annotations)
 
     output:
     tuple val(genome_prefix), path("${genome_prefix}_select.genes.gff"), path("${genome_prefix}_select.genes.gff.scatter_hist_aed.png")
-    script:
+    
+    script:   
+    def pairs = [labels, annotations].transpose()
+    def file_contents = pairs.collect { label, annotation ->
+        "${annotation}\t${label}"
+    }.join('\n')
+
     """
-    printf '%s\n' "${select_file_contents}" > ${genome_prefix}_select.fof
+    printf '%s\n' "${file_contents}" > ${genome_prefix}_select.fof
     ingenannot -v 2 -p ${task.cpus} \
         select \
         ${genome_prefix}_select.fof \
@@ -100,21 +106,26 @@ process ingenannot_selection_process {
         --use_ev_lg \
         --min_cds_len 100 \
         --no_partial \
-        --genome ${params.genomes}/${genome_prefix}/${genome_prefix}.fasta \
+        --genome ${masked_genome} \
         --no_cds_overlap
     """
 }
 
 process ingenannot_compare {    
     input:
-    tuple val(genome_prefix), val(compare_file_contents), file(select_genes_gff)
+    tuple val(genome_prefix), val(labels), path(annotations), path(select_genes_gff)
 
     output:
     tuple val(genome_prefix), path("ingenannot_compare.log")
 
     script:
+    def pairs = [labels, annotations].transpose()
+    def file_contents = pairs.collect { label, annotation ->
+        "${annotation}\t${label}"
+    }.join('\n')
+
     """
-    printf '%s\n' "${compare_file_contents}" > ${genome_prefix}_compare.fof
+    printf '%s\n%s' "${file_contents}" "${genome_prefix}_select.genes.gff\tselect" > ${genome_prefix}_compare.fof
     ingenannot -v 2 -p ${task.cpus} \
     compare \
     ${genome_prefix}_compare.fof > "ingenannot_compare.log"
@@ -124,6 +135,7 @@ process ingenannot_compare {
 workflow ingenannot {
     take:
     genome_prefixes
+    masked_genomes
     annotations
     collapsed_isoseq
     bam_files
@@ -172,35 +184,25 @@ workflow ingenannot {
 
     def aed_scores_ch =
         compute_aed_score_for_annotation(aed_input)
+    
+    def grouped_annotations = annotations.map { genome_prefix, label, annotation ->
+        tuple(groupKey(genome_prefix, 4), label, annotation)
+    }
+    .groupTuple()
+    .map {key, label, annotation ->
+        tuple(key.getGroupTarget(), label, annotation)
+    }
 
-    def select_fof_input = aed_scores_ch
-        .map { genome_prefix, label, aed_gff, _plot ->
-            tuple(groupKey(genome_prefix, 4), "${aed_gff}\t${label}")
-        }
-        .groupTuple()
-        .map { gkey, lines -> tuple(gkey.getGroupTarget(), lines.sort()) }
+    def select_input = masked_genomes.join(grouped_annotations);
 
-    def selection_process_input = select_fof_input
-        .map { genome_prefix, lines ->
-            tuple(genome_prefix, lines.join('\n'))
-        }
-
-    def select_output = ingenannot_selection_process(selection_process_input)
+    def select_output = ingenannot_selection_process(select_input)
 
     def select_genes_gff = select_output.map { genome_prefix, select_genes_gff, _hist -> tuple(genome_prefix, select_genes_gff)}
-
-    def comparison_process_input = select_fof_input
-        .map { genome_prefix, lines ->
-            tuple(
-                genome_prefix,
-                (lines + "${genome_prefix}_select.genes.gff\tselect")
-                    .join('\n')
-            )
-        }
-        .join(select_genes_gff)
+    
+    def comparison_input = grouped_annotations.join(select_genes_gff)
 
     def ingenannot_compare_log_ch =
-        ingenannot_compare(comparison_process_input)
+        ingenannot_compare(comparison_input)
 
     emit:
     top_isoforms_gff_csi = top_isoforms_gff_csi_ch

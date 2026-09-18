@@ -22,3 +22,6 @@ inputs/
 *.csv.bak
 Thumbs.db
 flowchart.png
+example_data_old/
+results-old/
+report.html
