@@ -71,7 +71,7 @@ process braker3 {
     tuple val(genome_prefix), path(masked_fasta), path(proteinDatabase), path(bam_files)
 
     output:
-    tuple val(genome_prefix), val("braker3"), path("braker.gff3")
+    tuple val(genome_prefix), val("braker3"), path("${genome_prefix}_braker3.gff")
 
     script:
     """
@@ -86,6 +86,7 @@ process braker3 {
     --workingdir=\$PWD \
     --gff3 \
     --verbosity=4
+    mv braker.gff3 ${genome_prefix}_braker3.gff
     """
 }
 
