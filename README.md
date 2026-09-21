@@ -9,7 +9,7 @@ A Nextflow pipeline for genome annotation. The pipeline requires:
 * PacBio Iso-Seq data **(optional)**.
 * A protein database.
 
-The pipeline creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple separate genomes with their own corresponding data at once.
+The pipeline creates annotations using 4 core annotators: [ANNEVO](https://github.com/xjtu-omics/ANNEVO), [Helixer](https://github.com/usadellab/Helixer), [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) and [Tiberius](https://github.com/Gaius-Augustus/Tiberius). It then uses [InGenAnnot](https://forge.inrae.fr/bioger/ingenannot) to compare and combine them to create an optimal single result annotation. The pipeline is designed such that it can process multiple separate genomes with their own corresponding data at once, and can run easily on an **offline** HPC cluster.
 
 ## Preparing Input Data
 
@@ -99,6 +99,7 @@ apptainer run gigacontainer.sif \
 ### Method 2 - Manual Setup
 
 For the manual setup, you must install **Apptainer** and **Nextflow**. After which, you can build and pull all the containers required for the pipeline with the `containers.sh` script (this will take a while):
+
 ```bash
 ./containers.sh
 ```
