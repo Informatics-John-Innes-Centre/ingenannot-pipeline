@@ -163,11 +163,19 @@ workflow {
             tuple(genome_prefix, sample_id, reads)
         }
 
-    def sample_counts = rnaseq_pairs.groupTuple().map { genome_prefix, _sample_id, reads ->
+    rnaseq_pairs_checked = rnaseq_pairs.ifEmpty {
+        error(
+            "No matching RNA-Seq pairs have been found. " +
+            "Check your file names and RNA-Seq prefixes! " +
+            "RNA-Seq files must end in either '-r1.fastq.gz' or '-r2.fastq.gz'."
+        )
+    }
+
+    def sample_counts = rnaseq_pairs_checked.groupTuple().map { genome_prefix, _sample_id, reads ->
         tuple(genome_prefix, reads.size())
     }
 
-    def genome_result_ch = genome(genome_prefixes, protein_databases, cram_flnc, rnaseq_pairs, sample_counts)
+    def genome_result_ch = genome(genome_prefixes, protein_databases, cram_flnc, rnaseq_pairs_checked, sample_counts)
 
     publish:
     masked_genomes = genome_result_ch.masked_genomes

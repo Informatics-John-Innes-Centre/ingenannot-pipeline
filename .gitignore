@@ -30,3 +30,4 @@ report.html
 trace-*.txt
 example/work
 example/results
+*.log

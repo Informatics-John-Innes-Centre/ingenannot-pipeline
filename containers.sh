@@ -1,4 +1,4 @@
-#! /bin/bash -e
+#! /bin/bash
 
 # Pull biocontainers
 mkdir -p apptainer-cache
