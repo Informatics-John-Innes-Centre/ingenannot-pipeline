@@ -14,7 +14,7 @@ apptainer pull apptainer-cache/stringtie.sif docker://quay.io/biocontainers/stri
 apptainer pull apptainer-cache/samtools.sif docker://quay.io/biocontainers/samtools:1.23--h96c455f_0
 apptainer pull apptainer-cache/isoseq.sif docker://quay.io/biocontainers/isoseq:4.3.0--h9ee0642_0
 apptainer pull apptainer-cache/pbmm2.sif docker://quay.io/biocontainers/pbmm2:26.1.99--h9ee0642_0
-apptainer build apptainer-cache/helixer.sif containers/helixer.def
-apptainer build apptainer-cache/ingenannot.sif containers/ingenannot.def
-apptainer build apptainer-cache/tiberius.sif containers/tiberius.def
-apptainer build apptainer-cache/samtools.sif containers/samtools.def
+apptainer build --force apptainer-cache/helixer.sif containers/helixer.def
+apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot.def
+apptainer build --force apptainer-cache/tiberius.sif containers/tiberius.def
+apptainer build --force apptainer-cache/samtools.sif containers/samtools.def

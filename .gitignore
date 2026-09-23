@@ -15,8 +15,9 @@ work
 resume.sh
 *.sh
 !containers.sh
-!example/run.sh
-!example/setup.sh
+!example/local.sh
+!example/gigacontainer.sh
+!example/slurm.sh
 *.slurm
 accession_files.csv
 work-old/
