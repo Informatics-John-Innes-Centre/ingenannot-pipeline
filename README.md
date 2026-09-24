@@ -90,7 +90,8 @@ apptainer run gigacontainer.sif \
     --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
     --rnaseq "/path/to/your/rnaseq" \
-    --isoseq "/path/to/your/isoseq" \
+# option
+    --isoseq "/path/to/your/isoseq" \ # <-- optional
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
     --annevoModel "annevo_model" \
@@ -113,6 +114,7 @@ nextflow run main.nf -profile local \
     --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
     --rnaseq "/path/to/your/rnaseq" \
+# optional
     --isoseq "/path/to/your/isoseq" \
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
@@ -127,6 +129,7 @@ nextflow run main.nf -profile hpc \
     --csv "/path/to/your/input.csv" \
     --proteinDatabase "/path/to/your/protein_database.fa" \
     --rnaseq "/path/to/your/rnaseq" \
+# optional
     --isoseq "/path/to/your/isoseq" \
     --tiberiusModel "tiberius_model" \
     --helixerLineage "helixer_lineage" \
