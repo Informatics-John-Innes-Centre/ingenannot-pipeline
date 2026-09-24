@@ -54,8 +54,7 @@ jobs:
 
       - name: Build Apptainer image
         run: |
-          ./containers.sh
-          apptainer build container.sif gigacontainer.def
+          chmod +x containers.sh && ./containers.sh && apptainer build container.sif gigacontainer.def
 
       - name: Log in to GHCR for Apptainer
         run: |
