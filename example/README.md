@@ -1,6 +1,6 @@
 # Arabidopsis Example
 
-This is an example dataset derived from the last 1,000,000 nucleotides of *Arabidopsis thalian's* chromosome Chr5. The protein database subsampled version of a *Viridiplantae* OrthoDB plant protein database and there is a single pair of RNA-Seq paired-end fastq's. All of this data was derived from Braker 3's [example data](https://github.com/Gaius-Augustus/BRAKER#example-data), the only difference being the RNA-Seq bam had all non paired end reads filtered out and then converted to a fastq file.
+This is an example dataset derived from the last 1,000,000 nucleotides of *Arabidopsis thalian's* chromosome Chr5, split into 8 synthetic contigs. The protein database is a subsampled version of a *Viridiplantae* OrthoDB plant protein database and there is a single pair of RNA-Seq paired-end fastq's. All of this data was derived from Braker 3's [example data](https://github.com/Gaius-Augustus/BRAKER#example-data), the only difference being the RNA-Seq bam had all non paired end reads filtered out and was then converted to a fastq pair.
 
 ## Runtime
 
