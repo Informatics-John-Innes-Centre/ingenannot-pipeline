@@ -1,0 +1,68 @@
+name: Build and publish Apptainer image
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Apptainer
+        uses: eWaterCycle/setup-apptainer@v2
+        with:
+          version: 1.3.6
+
+      - name: Set image tags
+        id: tags
+        shell: bash
+        run: |
+          version="${GITHUB_EVENT_RELEASE_TAG_NAME#v}"
+          image="${REGISTRY}/${IMAGE_NAME,,}"
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "image=${image}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Apptainer image
+        run: |
+          apptainer build container.sif gigacontainer.def
+
+      - name: Log in to GHCR
+        env:
+          APPTAINER_DOCKER_USERNAME: ${{ github.actor }}
+          APPTAINER_DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          apptainer registry login \
+            --username "$APPTAINER_DOCKER_USERNAME" \
+            --password "$APPTAINER_DOCKER_PASSWORD" \
+            oras://ghcr.io
+
+      - name: Push versioned image
+        env:
+          IMAGE: ${{ steps.tags.outputs.image }}
+          VERSION: ${{ steps.tags.outputs.version }}
+        run: |
+          apptainer push \
+            container.sif \
+            "oras://${IMAGE}:${VERSION}"
+
+      - name: Push latest image
+        if: ${{ !github.event.release.prerelease }}
+        env:
+          IMAGE: ${{ steps.tags.outputs.image }}
+        run: |
+          apptainer push \
+            container.sif \
+            "oras://${IMAGE}:latest"
