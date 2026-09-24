@@ -134,14 +134,21 @@ workflow {
     }
 
     // get isoseq cram files
-    def cram_flnc = rows
-        .filter { _genome_prefix, _illumina_prefix, isoseq_prefix -> isoseq_prefix && isoseq_prefix != ""}
-        .map { genome_prefix, _illumina_prefix, isoseq_prefix ->
-            tuple(
-                genome_prefix,
-                file("${params.isoseq}/${isoseq_prefix}.flnc.cram")
-            )
-        }
+    def cram_flnc
+    if (!params.isoseq) {
+        cram_flnc = channel.empty()
+    } else {
+        cram_flnc = rows
+            .filter { _genome_prefix, _illumina_prefix, isoseq_prefix ->
+                isoseq_prefix && isoseq_prefix != ''
+            }
+            .map { genome_prefix, _illumina_prefix, isoseq_prefix ->
+                tuple(
+                    genome_prefix,
+                    file("${params.isoseq}/${isoseq_prefix}.flnc.cram")
+                )
+            }
+    }
 
     // Find the rnaseq pairs
     def rnaseq_files = channel
