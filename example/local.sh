@@ -17,7 +17,7 @@ then
 fi
 
 export NXF_OFFLINE='true'
-nextflow run ../main.nf -resume -with-trace -profile hpc -with-report report.html \
+nextflow run ../main.nf -resume -with-trace -profile local -with-report \
     --genomes genomes \
     --csv input.csv \
     --proteinDatabase Viridiplantae_alt_headers.fa \

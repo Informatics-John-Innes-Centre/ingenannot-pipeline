@@ -20,7 +20,7 @@ read -p "Enter the slurm queue(s) (comma separated) to run non-GPU tasks on: " q
 read -p "Enter the slurm queue(s) (comma separated) to run GPU tasks on: " gpu_queue
 
 export NXF_OFFLINE='true'
-nextflow run ../main.nf -resume -with-trace -profile hpc -with-report report.html \
+nextflow run ../main.nf -resume -with-trace -profile hpc -with-report \
     --genomes genomes \
     --csv input.csv \
     --proteinDatabase Viridiplantae_alt_headers.fa \

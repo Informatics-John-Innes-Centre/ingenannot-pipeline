@@ -11,7 +11,7 @@ then
 fi
 
 export NXF_OFFLINE='true'
-apptainer run ../gigacontainer.sif -with-trace -with-report report.html \
+apptainer run ../gigacontainer.sif -with-trace -with-report  \
     --genomes genomes \
     --csv input.csv \
     --proteinDatabase Viridiplantae_alt_headers.fa \
