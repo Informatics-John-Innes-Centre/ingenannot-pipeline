@@ -3,15 +3,18 @@ name: Build and publish images
 on:
   release:
     types: [published]
+
   workflow_dispatch:
     inputs:
       tag:
         description: "Release tag to process"
         required: true
         type: string
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ingenannot-pipeline
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
 
 jobs:
   build-and-publish:
@@ -22,22 +25,27 @@ jobs:
       packages: write
 
     steps:
-      - name: Check out repository
+      - name: Check out release tag
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Set image tags
         id: tags
         shell: bash
+        env:
+          TAG: ${{ env.RELEASE_TAG }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         run: |
-          version="${GITHUB_EVENT_RELEASE_TAG_NAME#v}"
+          set -euo pipefail
+
+          version="${TAG#v}"
           image="${REGISTRY}/${IMAGE_NAME,,}"
 
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
-
-      #
-      # Build and publish the Apptainer SIF image
-      #
 
       - name: Install Apptainer
         uses: eWaterCycle/setup-apptainer@v2
@@ -46,7 +54,8 @@ jobs:
 
       - name: Build Apptainer image
         run: |
-          ./containers.sh && apptainer build container.sif gigacontainer.def
+          ./containers.sh
+          apptainer build container.sif gigacontainer.def
 
       - name: Log in to GHCR for Apptainer
         run: |
@@ -65,7 +74,9 @@ jobs:
             "oras://${IMAGE}:${VERSION}"
 
       - name: Push latest Apptainer image
-        if: ${{ !github.event.release.prerelease }}
+        if: >-
+          github.event_name == 'release' &&
+          github.event.release.prerelease == false
         env:
           IMAGE: ${{ steps.tags.outputs.image }}
         run: |
