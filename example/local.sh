@@ -1,3 +1,5 @@
+#! /bin/bash
+
 if [ ! -d ../apptainer-cache ];
 then
     echo "You must run the script 'containers.sh' in the root of the repository to build the container cache first!"

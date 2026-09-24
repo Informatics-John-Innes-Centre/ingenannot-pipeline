@@ -1,4 +1,4 @@
-name: Build and publish Apptainer image
+name: Build and publish images
 
 on:
   release:
@@ -20,11 +20,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install Apptainer
-        uses: eWaterCycle/setup-apptainer@v2
-        with:
-          version: 1.3.6
-
       - name: Set image tags
         id: tags
         shell: bash
@@ -35,21 +30,51 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
 
+      #
+      # Build and publish the Docker/OCI image
+      #
+
+      - name: Log in to GHCR for Docker
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.tags.outputs.image }}:${{ steps.tags.outputs.version }}
+            ${{ steps.tags.outputs.image }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.tags.outputs.version }}
+
+      #
+      # Build and publish the Apptainer SIF image
+      #
+
+      - name: Install Apptainer
+        uses: eWaterCycle/setup-apptainer@v2
+        with:
+          version: 1.3.6
+
       - name: Build Apptainer image
         run: |
           apptainer build container.sif gigacontainer.def
 
-      - name: Log in to GHCR
-        env:
-          APPTAINER_DOCKER_USERNAME: ${{ github.actor }}
-          APPTAINER_DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GHCR for Apptainer
         run: |
           apptainer registry login \
-            --username "$APPTAINER_DOCKER_USERNAME" \
-            --password "$APPTAINER_DOCKER_PASSWORD" \
+            --username "${{ github.actor }}" \
+            --password "${{ secrets.GITHUB_TOKEN }}" \
             oras://ghcr.io
 
-      - name: Push versioned image
+      - name: Push versioned Apptainer image
         env:
           IMAGE: ${{ steps.tags.outputs.image }}
           VERSION: ${{ steps.tags.outputs.version }}
@@ -58,7 +83,7 @@ jobs:
             container.sif \
             "oras://${IMAGE}:${VERSION}"
 
-      - name: Push latest image
+      - name: Push latest Apptainer image
         if: ${{ !github.event.release.prerelease }}
         env:
           IMAGE: ${{ steps.tags.outputs.image }}

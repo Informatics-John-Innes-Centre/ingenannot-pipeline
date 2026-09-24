@@ -1,9 +1,13 @@
-#! /bin/bash
+#! /bin/bash -e
 
 # Pull biocontainers
 mkdir -p apptainer-cache
 
 # Build custom containers
+apptainer build --force apptainer-cache/samtools.sif containers/samtools.def
+apptainer build --force apptainer-cache/helixer.sif containers/helixer.def
+apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot.def
+apptainer build --force apptainer-cache/tiberius.sif containers/tiberius.def
 apptainer pull apptainer-cache/bedtools.sif docker://quay.io/biocontainers/bedtools:2.31.1--h13024bc_3
 apptainer pull apptainer-cache/annevo.sif docker://quay.io/biocontainers/annevo:2.3.2--hdfd78af_0
 apptainer pull apptainer-cache/miniprot.sif docker://quay.io/biocontainers/miniprot:0.18--h577a1d6_0
@@ -14,7 +18,3 @@ apptainer pull apptainer-cache/stringtie.sif docker://quay.io/biocontainers/stri
 apptainer pull apptainer-cache/samtools.sif docker://quay.io/biocontainers/samtools:1.23--h96c455f_0
 apptainer pull apptainer-cache/isoseq.sif docker://quay.io/biocontainers/isoseq:4.3.0--h9ee0642_0
 apptainer pull apptainer-cache/pbmm2.sif docker://quay.io/biocontainers/pbmm2:26.1.99--h9ee0642_0
-apptainer build --force apptainer-cache/helixer.sif containers/helixer.def
-apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot.def
-apptainer build --force apptainer-cache/tiberius.sif containers/tiberius.def
-apptainer build --force apptainer-cache/samtools.sif containers/samtools.def

@@ -83,6 +83,7 @@ There are then two methods to run the pipeline.
 For this method you must have **Apptainer** installed. **The GIGACONTAINER** is a container that comes with everything needed to run the pipeline pre-installed. You can build and run it like so:
 
 ```bash
+./containers.sh
 apptainer build gigacontainer.sif gigacontainer.def
 apptainer run gigacontainer.sif \
     --genomes "/path/to/your/genomes" \

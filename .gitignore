@@ -28,6 +28,7 @@ flowchart.png
 example_data_old/
 results-old/
 report.html
+report-*.html
 trace-*.txt
 example/work
 example/results

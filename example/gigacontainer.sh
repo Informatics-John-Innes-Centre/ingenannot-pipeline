@@ -1,3 +1,5 @@
+#! /bin/bash
+
 if [ ! -f ../gigacontainer.sif ];
 then
     echo "The container image is not present! In the root of the repository, run 'apptainer build gigacontainer.sif gigacontainer.def'."
