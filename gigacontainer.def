@@ -13,6 +13,7 @@ From: debian:13.6
     pixi.toml /opt/pipeline/pixi.toml
 %environment 
     export PIXI_PROJECT_MANIFEST=/opt/pipeline/pixi.toml
+    export NXF_OFFLINE='true'
 %post
     set -e
     apt-get update
@@ -25,7 +26,7 @@ From: debian:13.6
     pixi install -e apptainer
     pixi run -e apptainer ./containers.sh
 %runscript
-    exec pixi run -e apptainer nextflow run /opt/pipeline/main.nf -c /opt/pipeline/nextflow.config -profile local "$@"Bootstrap: docker
+    exec pixi run -e apptainer nextflow run /opt/pipeline/main.nf -c /opt/pipeline/nextflow.config -profile local "$@"
 From: debian:13.6
 
 %labels
