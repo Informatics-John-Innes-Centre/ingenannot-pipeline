@@ -15,6 +15,5 @@ apptainer pull apptainer-cache/cutadapt.sif docker://quay.io/biocontainers/cutad
 apptainer pull apptainer-cache/star.sif docker://quay.io/biocontainers/star:2.7.11b--h5ca1c30_8
 apptainer pull apptainer-cache/braker3.sif docker://teambraker/braker3:v3.0.8
 apptainer pull apptainer-cache/stringtie.sif docker://quay.io/biocontainers/stringtie:3.0.3--h29c0135_0
-apptainer pull apptainer-cache/samtools.sif docker://quay.io/biocontainers/samtools:1.23--h96c455f_0
 apptainer pull apptainer-cache/isoseq.sif docker://quay.io/biocontainers/isoseq:4.3.0--h9ee0642_0
 apptainer pull apptainer-cache/pbmm2.sif docker://quay.io/biocontainers/pbmm2:26.1.99--h9ee0642_0
