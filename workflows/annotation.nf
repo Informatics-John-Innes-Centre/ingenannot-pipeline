@@ -35,7 +35,7 @@ process tiberius {
 
     script:
     """
-    python /opt/Tiberius/tiberius.py \
+    python3 /opt/Tiberius/tiberius.py \
         --genome ${masked_fasta} \
         --model /opt/Tiberius/model_weights/${params.tiberiusModel} \
         --out ${genome_prefix}_tiberius.gtf

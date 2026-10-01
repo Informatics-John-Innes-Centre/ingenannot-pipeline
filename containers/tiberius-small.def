@@ -1,0 +1,207 @@
+Bootstrap: docker
+From: ubuntu:24.04
+Stage: builder
+
+%post
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update -y
+    apt-get install -y --no-install-recommends \
+        time \
+        git \
+        libgsl-dev \
+        libboost-all-dev \
+        libsuitesparse-dev \
+        liblpsolve55-dev \
+        libsqlite3-dev \
+        libmysql++-dev \
+        libboost-iostreams-dev \
+        zlib1g-dev \
+        libbamtools-dev \
+        samtools \
+        libhts-dev \
+        cdbfasta \
+        diamond-aligner \
+        libfile-which-perl \
+        libparallel-forkmanager-perl \
+        libyaml-perl \
+        libdbd-mysql-perl \
+        wget \
+        build-essential \
+        python3 \
+        python3-pip
+    rm -rf /var/lib/apt/lists/*
+
+    # get tools
+    cd /opt
+    git clone https://github.com/Gaius-Augustus/Augustus/
+    cd Augustus
+    make clean
+    make
+    make install
+    rm -rf .git
+    rm -rf auxprogs
+    rm -rf docs
+    rm -rf examples
+
+    cd /opt
+    git clone https://github.com/Gaius-Augustus/Tiberius
+    cd Tiberius
+    python3 -m pip install . --prefix=/opt/tiberius_deps
+    chmod +x tiberius.py
+    chmod +x tiberius/*py
+
+    cd /opt
+    git clone https://github.com/tomasbruna/miniprothint
+    cd miniprothint
+    rm -rf .git example
+
+    cd /opt
+    git clone https://github.com/lh3/miniprot
+    cd miniprot
+    make
+
+    cd /opt
+    git clone https://github.com/tomasbruna/miniprot-boundary-scorer
+    cd miniprot-boundary-scorer
+    make
+
+    cd /opt
+    wget https://github.com/lh3/minimap2/releases/download/v2.30/minimap2-2.30_x64-linux.tar.bz2
+    tar -jxvf minimap2-2.30_x64-linux.tar.bz2
+
+    cd /opt
+    wget https://github.com/gpertea/stringtie/releases/download/v3.0.3/stringtie-3.0.3.Linux_x86_64.tar.gz
+    tar xzf stringtie-3.0.3.Linux_x86_64.tar.gz
+
+    cd /opt 
+    wget -q https://github.com/TransDecoder/TransDecoder/archive/refs/tags/TransDecoder-v5.7.1.tar.gz
+    tar -xzf TransDecoder-v5.7.1.tar.gz
+    rm -f TransDecoder-v5.7.1.tar.gz
+    cd TransDecoder-TransDecoder-v5.7.1
+    rm -rf sample_data
+
+    cd /opt
+    mkdir bedtools
+    cd bedtools
+    wget https://github.com/arq5x/bedtools2/releases/download/v2.30.0/bedtools.static.binary
+    mv bedtools.static.binary bedtools
+    chmod a+x bedtools
+
+    cd /opt
+    wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.3.0/sratoolkit.3.3.0-ubuntu64.tar.gz
+    tar xzf sratoolkit.3.3.0-ubuntu64.tar.gz
+
+    cd /opt
+    wget -q https://github.com/shenwei356/seqkit/releases/download/v2.11.0/seqkit_linux_amd64.tar.gz
+    tar xzf seqkit_linux_amd64.tar.gz
+    mv seqkit /usr/local/bin/seqkit
+    chmod +x /usr/local/bin/seqkit
+    rm seqkit_linux_amd64.tar.gz
+
+    cd /opt
+    wget -q  https://github.com/gpertea/gffread/releases/download/v0.12.7/gffread-0.12.7.Linux_x86_64.tar.gz
+    tar xzf gffread-0.12.7.Linux_x86_64.tar.gz
+
+    cd /opt
+    rm *tar.gz
+
+    mkdir -p /opt/Tiberius/model_weights
+    wget -qO- https://bioinf.uni-greifswald.de/bioinf/tiberius/models/angiosperms_softmasking.tar.gz | tar -xzf - -C /opt/Tiberius/model_weights
+
+################################################################################
+
+Bootstrap: docker
+From: nvidia/cuda:12.8.0-cudnn-runtime-ubuntu24.04
+Stage: final
+
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+    export PATH=$PATH:/opt/Tiberius/tiberius/:/opt/Tiberius/:/opt/Augustus/bin:/opt/Tiberius/:/opt/minimap2-2.30_x64-linux:/opt/stringtie-3.0.3.Linux_x86_64:/opt/TransDecoder-TransDecoder-v5.7.1:/opt/TransDecoder-TransDecoder-v5.7.1/util:/opt/bedtools/:/opt/gffread-0.12.7.Linux_x86_64:/usr/local/bin/
+    export TF_USE_LEGACY_KERAS=0
+
+%files from builder
+    /opt/Augustus /opt/Augustus
+    /opt/sratoolkit.3.3.0-ubuntu64/bin /usr/local/bin/
+    /opt/miniprot-boundary-scorer/miniprot_boundary_scorer /usr/local/bin/
+    /opt/miniprothint/*.py /usr/local/bin/
+    /opt/miniprot/miniprot /usr/local/bin/
+
+    # Tiberius has source files and dependencies in the builder, that need to be copied
+    /opt/Tiberius/tiberius /opt/Tiberius/tiberius
+    /opt/Tiberius/tiberius.py /opt/Tiberius/tiberius.py
+    /opt/Tiberius/model_cfg /opt/Tiberius/model_cfg
+    /opt/tiberius_deps/local/ /usr/local
+    /opt/Tiberius/model_weights /opt/Tiberius/model_weights
+
+    # other stuff
+    /opt/TransDecoder-TransDecoder-v5.7.1 /opt/TransDecoder-TransDecoder-v5.7.1
+    /opt/minimap2-2.30_x64-linux /opt/minimap2-2.30_x64-linux
+    /opt/stringtie-3.0.3.Linux_x86_64 /opt/stringtie-3.0.3.Linux_x86_64
+    /opt/bedtools /opt/bedtools
+    /opt/gffread-0.12.7.Linux_x86_64 /opt/gffread-0.12.7.Linux_x86_64
+    /usr/local/bin/seqkit /usr/local/bin/seqkit
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    export PIP_NO_CACHE_DIR=1
+    export PYTHONDONTWRITEBYTECODE=1
+
+    apt-get update -y
+    apt-get install -y --no-install-recommends \
+        time \
+        libgsl-dev \
+        libboost-all-dev \
+        libsuitesparse-dev \
+        liblpsolve55-dev \
+        libsqlite3-dev \
+        libmysql++-dev \
+        libboost-iostreams-dev \
+        zlib1g-dev \
+        libbamtools-dev \
+        samtools \
+        libhts-dev \
+        cdbfasta \
+        diamond-aligner \
+        perl \
+        libfile-which-perl \
+        libparallel-forkmanager-perl \
+        libyaml-perl \
+        libdbd-mysql-perl \
+        hisat2 \
+        python3 \
+        python3-pip \
+        cuda-nvvm-12-8 \
+        cuda-nvcc-12-8 \
+        ca-certificates \
+        libdb-dev \
+        bamtools
+    rm -rf \
+        /usr/share/doc/* \
+        /usr/share/man/* \
+        /usr/share/info/* \
+        /usr/share/lintian/* \
+        /var/cache/apt/* \
+        /var/lib/apt/lists/*
+
+    # Dependencies
+    python3 -m pip install --break-system-packages --no-cache-dir \
+        tensorflow \
+        "pyfamsa<0.6.0" \
+        numpy \
+        pydantic \
+        biopython \
+        requests \
+        pandas \
+        pyyaml \
+        pyBigWig \
+        bio \
+        scikit-learn \
+        bcbio-gff \
+        plotly
+    python3 -m pip install --break-system-packages --no-deps bricks2marble hidten
+    export TF_USE_LEGACY_KERAS=0
+    python3 -m pip install --break-system-packages --upgrade "keras>=3,<4"
