@@ -34,3 +34,4 @@ example/work
 example/results
 *.log
 *.gtf
+compare_annotations.py

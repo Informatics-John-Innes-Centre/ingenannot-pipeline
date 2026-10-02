@@ -38,6 +38,7 @@ Stage: builder
     cd /opt
     git clone https://github.com/Gaius-Augustus/Augustus/
     cd Augustus
+    git checkout 122867cbc2c5693c232ba0c1d2885afcfdca4845
     make clean
     make
     make install
@@ -49,6 +50,7 @@ Stage: builder
     cd /opt
     git clone https://github.com/Gaius-Augustus/Tiberius
     cd Tiberius
+    git checkout 596c9151b17a9e1f10f32ed7b24fb802fa81e01c
     python3 -m pip install . --prefix=/opt/tiberius_deps
     chmod +x tiberius.py
     chmod +x tiberius/*py
@@ -56,16 +58,19 @@ Stage: builder
     cd /opt
     git clone https://github.com/tomasbruna/miniprothint
     cd miniprothint
+    git checkout 07cc5abe7fb83d4cbf98a3342e8423beefa81c99
     rm -rf .git example
 
     cd /opt
     git clone https://github.com/lh3/miniprot
     cd miniprot
+    git checkout 81f9b93481cec16622eff339fc998e4f38da344e
     make
 
     cd /opt
     git clone https://github.com/tomasbruna/miniprot-boundary-scorer
     cd miniprot-boundary-scorer
+    git checkout b0d103ef920dc11a567700c1b3dec022fea8de6d
     make
 
     cd /opt
@@ -190,18 +195,19 @@ Stage: final
     # Dependencies
     python3 -m pip install --break-system-packages --no-cache-dir \
         tensorflow \
-        "pyfamsa<0.6.0" \
-        numpy \
-        pydantic \
-        biopython \
-        requests \
-        pandas \
-        pyyaml \
-        pyBigWig \
-        bio \
-        scikit-learn \
-        bcbio-gff \
-        plotly
-    python3 -m pip install --break-system-packages --no-deps bricks2marble hidten
+        pyfamsa==0.5.3.post1 \
+        numpy==1.26.4 \
+        pydantic==2.13.4 \
+        packaging==26.2 \
+        biopython==1.87 \
+        requests==2.32.3 \
+        pandas==2.2.3 \
+        pyyaml==6.0.2 \
+        pyBigWig==0.3.25 \
+        bio==1.8.1 \
+        scikit-learn==1.5.2 \
+        bcbio-gff==0.7.1 \
+        plotly==6.9.0
+    python3 -m pip install --break-system-packages --no-deps bricks2marble==0.0.6 hidten==0.0.2
     export TF_USE_LEGACY_KERAS=0
     python3 -m pip install --break-system-packages --upgrade "keras>=3,<4"
