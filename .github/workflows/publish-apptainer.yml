@@ -52,4 +52,4 @@ jobs:
 
       - name: Build Apptainer image
         run: |
-          chmod +x containers.sh && ./containers.sh && sudo apptainer build container.sif gigacontainer.def
+          chmod +x containers.sh && sudo ./containers.sh && sudo apptainer build container.sif gigacontainer.def
