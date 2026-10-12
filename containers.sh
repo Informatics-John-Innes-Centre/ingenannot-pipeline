@@ -4,10 +4,10 @@
 mkdir -p apptainer-cache
 
 # Build custom containers
+apptainer build --force apptainer-cache/tiberius.sif containers/tiberius-small.def
 apptainer build --force apptainer-cache/samtools.sif containers/samtools.def
 apptainer build --force apptainer-cache/helixer.sif containers/helixer.def
-apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot-small.def
-apptainer build --force apptainer-cache/tiberius.sif containers/tiberius.def
+apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot.def
 apptainer pull apptainer-cache/bedtools.sif docker://quay.io/biocontainers/bedtools:2.31.1--h13024bc_3
 apptainer pull apptainer-cache/annevo.sif docker://quay.io/biocontainers/annevo:2.3.2--hdfd78af_0
 apptainer pull apptainer-cache/miniprot.sif docker://quay.io/biocontainers/miniprot:0.18--h577a1d6_0
