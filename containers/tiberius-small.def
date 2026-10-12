@@ -119,7 +119,7 @@ Stage: builder
 ################################################################################
 
 Bootstrap: docker
-From: nvidia/cuda:12.8.0-cudnn-runtime-ubuntu24.04
+From: nvidia/cuda@sha256:c40d1065da90274969f9faa7fe1a7fcd1c374d5783482eec09ee5b516746088f
 Stage: final
 
 %environment
@@ -157,33 +157,33 @@ Stage: final
 
     apt-get update -y
     apt-get install -y --no-install-recommends \
-        time \
-        libgsl-dev \
-        libboost-all-dev \
-        libsuitesparse-dev \
+        time=1.9-0.2build1 \
+        libgsl-dev=2.7.1+dfsg-6ubuntu2 \
+        libboost-all-dev=1.83.0.1ubuntu2 \
+        libsuitesparse-dev=1:7.6.1+dfsg-1build1 \
         liblpsolve55-dev \
         libsqlite3-dev \
-        libmysql++-dev \
-        libboost-iostreams-dev \
+        libmysql++-dev=3.2.5-2.3 \
+        libboost-iostreams-dev=1.83.0.1ubuntu2 \
         zlib1g-dev \
-        libbamtools-dev \
-        samtools \
-        libhts-dev \
-        cdbfasta \
-        diamond-aligner \
+        libbamtools-dev=2.5.2+dfsg-4 \
+        samtools=1.19.2-1build2 \
+        libhts-dev=1.19+ds-1.1build3 \
+        cdbfasta=1.00+git20230710.da8f5ba+dfsg-1build1 \
+        diamond-aligner=2.1.9-1 \
         perl \
-        libfile-which-perl \
-        libparallel-forkmanager-perl \
-        libyaml-perl \
-        libdbd-mysql-perl \
-        hisat2 \
+        libfile-which-perl=1.27-2 \
+        libparallel-forkmanager-perl=2.02-1 \
+        libyaml-perl=1.31-1 \
+        libdbd-mysql-perl=4.052-1ubuntu3 \
+        hisat2=2.2.1-4 \
         python3 \
         python3-pip \
         cuda-nvvm-12-8 \
-        cuda-nvcc-12-8 \
-        ca-certificates \
-        libdb-dev \
-        bamtools
+        cuda-nvcc-12-8\
+        ca-certificates=20260601~24.04.1 \
+        libdb-dev=1:5.3.21ubuntu2 \
+        bamtools=2.5.2+dfsg-4
     rm -rf \
         /usr/share/doc/* \
         /usr/share/man/* \
@@ -207,7 +207,8 @@ Stage: final
         bio==1.8.1 \
         scikit-learn==1.5.2 \
         bcbio-gff==0.7.1 \
-        plotly==6.9.0
+        plotly==6.9.0 \
+        setuptools==83.0.0
     python3 -m pip install --break-system-packages --no-deps bricks2marble==0.0.6 hidten==0.0.2
     export TF_USE_LEGACY_KERAS=0
-    python3 -m pip install --break-system-packages --upgrade "keras>=3,<4"
+    python3 -m pip install --break-system-packages --upgrade "keras==3.14.0"
