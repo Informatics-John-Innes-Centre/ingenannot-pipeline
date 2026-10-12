@@ -54,31 +54,4 @@ jobs:
 
       - name: Build Apptainer image
         run: |
-          chmod +x containers.sh && ./containers.sh && apptainer build container.sif gigacontainer.def
-
-      - name: Log in to GHCR for Apptainer
-        run: |
-          apptainer registry login \
-            --username "${{ github.actor }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
-            oras://ghcr.io
-
-      - name: Push versioned Apptainer image
-        env:
-          IMAGE: ${{ steps.tags.outputs.image }}
-          VERSION: ${{ steps.tags.outputs.version }}
-        run: |
-          apptainer push \
-            container.sif \
-            "oras://${IMAGE}:${VERSION}"
-
-      - name: Push latest Apptainer image
-        if: >-
-          github.event_name == 'release' &&
-          github.event.release.prerelease == false
-        env:
-          IMAGE: ${{ steps.tags.outputs.image }}
-        run: |
-          apptainer push \
-            container.sif \
-            "oras://${IMAGE}:latest"
+          chmod +x containers.sh && ./containers.sh && sudo apptainer build container.sif gigacontainer.def
