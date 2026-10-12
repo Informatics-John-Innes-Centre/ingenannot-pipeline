@@ -6,15 +6,15 @@ on:
 
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Release tag or commit SHA to process"
+      version:
+        description: "Version number"
         required: true
         type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ingenannot-pipeline
-  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.version }}
 
 jobs:
   build-and-publish:
@@ -27,9 +27,7 @@ jobs:
     steps:
       - name: Check out release tag
         uses: actions/checkout@v4
-        with:
-          ref: ${{ env.RELEASE_TAG }}
-
+        
       - name: Set image tags
         id: tags
         shell: bash
