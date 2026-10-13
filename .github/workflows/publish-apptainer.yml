@@ -74,7 +74,7 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://${IMAGE}:${VERSION}"
+            "oras://informatics-john-innes-center/${IMAGE}:${VERSION}"
 
       - name: Push latest Apptainer image
         env:
@@ -82,4 +82,4 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://${IMAGE}:latest"
+            "oras://informatics-john-innes-center/${IMAGE}:latest"
