@@ -46,7 +46,7 @@ jobs:
           set -euo pipefail
           
           version="${TAG#v}"
-          image="${REGISTRY}/test-${IMAGE_NAME,,}"
+          image="${REGISTRY}/informatics-john-innes-center/test-${IMAGE_NAME,,}"
 
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
@@ -79,7 +79,7 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://informatics-john-innes-center/${IMAGE}:${VERSION}"
+            "oras://${IMAGE}:${VERSION}"
 
       - name: Push latest Apptainer image
         env:
@@ -87,4 +87,4 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://informatics-john-innes-center/${IMAGE}:latest"
+            "oras://${IMAGE}:latest"
