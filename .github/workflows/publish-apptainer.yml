@@ -62,10 +62,11 @@ jobs:
 
       - name: Log in to GHCR for Apptainer
         run: |
-          apptainer registry login \
-            --username "${{ github.actor }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
-            oras://ghcr.io
+          printf '%s' "$GH_TOKEN" |
+            apptainer registry login \
+              --username "$GITHUB_ACTOR" \
+              --password-stdin \
+              oras://ghcr.io
 
       - name: Push versioned Apptainer image
         env:
