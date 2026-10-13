@@ -60,11 +60,15 @@ jobs:
         run: |
           chmod +x containers.sh && sudo ./containers.sh && sudo apptainer build container.sif gigacontainer.def
 
-      - name: Log in to GHCR for Apptainer
+      - name: Log in to GHCR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_USER: ${{ github.actor }}
         run: |
           printf '%s' "$GH_TOKEN" |
             apptainer registry login \
-              --username "$GITHUB_ACTOR" \
+              --username "$GH_USER" \
               --password-stdin \
               oras://ghcr.io
 
