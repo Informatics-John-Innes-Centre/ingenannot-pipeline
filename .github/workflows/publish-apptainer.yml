@@ -10,10 +10,15 @@ on:
         description: "Version number"
         required: true
         type: string
+      ref:
+        description: "Branch, tag or SHA to checkout"
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ingenannot-pipeline
+  CHECKOUT_REF: ${{ github.event.release.tag_name || inputs.ref }}
   RELEASE_TAG: ${{ github.event.release.tag_name || inputs.version }}
 
 jobs:
@@ -27,6 +32,8 @@ jobs:
     steps:
       - name: Check out release tag
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CHECKOUT_REF }}
         
       - name: Set image tags
         id: tags
@@ -37,11 +44,10 @@ jobs:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
         run: |
           set -euo pipefail
-
+          
           version="${TAG#v}"
-          image="${REGISTRY}/${IMAGE_NAME,,}"
+          image="${REGISTRY}/test-${IMAGE_NAME,,}"
 
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
 
@@ -68,7 +74,7 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://test-${IMAGE}:${VERSION}"
+            "oras://${IMAGE}:${VERSION}"
 
       - name: Push latest Apptainer image
         env:
@@ -76,4 +82,4 @@ jobs:
         run: |
           apptainer push \
             container.sif \
-            "oras://$test-{IMAGE}:latest"
+            "oras://${IMAGE}:latest"
