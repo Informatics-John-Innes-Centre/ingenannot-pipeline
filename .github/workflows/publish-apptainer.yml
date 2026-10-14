@@ -46,7 +46,7 @@ jobs:
           set -euo pipefail
           
           version="${TAG#v}"
-          image="${REGISTRY}/informatics-john-innes-centre/test-${IMAGE_NAME,,}"
+          image="${REGISTRY}/informatics-john-innes-centre/${IMAGE_NAME,,}"
 
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
