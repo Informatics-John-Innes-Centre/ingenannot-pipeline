@@ -1,8 +1,8 @@
 FROM debian:13.7
 COPY main.nf /opt/pipeline/
-COPY workflows /opt/pipeline/
+ADD workflows /opt/pipeline/workflows
 COPY nextflow.config /opt/pipeline/
-COPY containers /opt/pipeline/containers
+ADD containers /opt/pipeline/containers
 COPY containers.sh /opt/pipeline/
 COPY pixi.lock /opt/pipeline/
 COPY pixi.toml /opt/pipeline/
@@ -30,4 +30,4 @@ rm -rf /var/lib/apt/lists/* && \
 wget -qO- https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh && \
 pixi config set mirrors '{"https://conda.anaconda.org/": ["https://prefix.dev/"]}' && \
 pixi install -e apptainer
-CMD ["exec", "pixi", "run", "-e", "apptainer", "nextflow", "run", "/opt/pipeline/main.nf", "-c", "/opt/pipeline/nextflow.config", "-profile", "local", "$@"]
+ENTRYPOINT ["pixi", "run", "-e", "apptainer", "nextflow", "run", "/opt/pipeline/main.nf", "-c", "/opt/pipeline/nextflow.config", "-profile", "local"]
