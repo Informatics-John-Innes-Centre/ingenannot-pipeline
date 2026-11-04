@@ -21,6 +21,10 @@ COPY apptainer-cache/stringtie.sif /opt/pipeline/apptainer-cache/
 COPY apptainer-cache/samtools.sif /opt/pipeline/apptainer-cache/
 COPY apptainer-cache/isoseq.sif /opt/pipeline/apptainer-cache/
 COPY apptainer-cache/pbmm2.sif /opt/pipeline/apptainer-cache/
+COPY apptainer-cache/pbbam.sif /opt/pipeline/apptainer-cache/
+COPY apptainer-cache/agat.sif /opt/pipeline/apptainer-cache/
+COPY apptainer-cache/debian.sif /opt/pipeline/apptainer-cache/
+
 ENV NXF_OFFLINE='true' \
 PIXI_PROJECT_MANIFEST=/opt/pipeline/pixi.toml
 WORKDIR /opt/pipeline
