@@ -2,6 +2,7 @@ FROM debian:13.7
 COPY main.nf /opt/pipeline/
 ADD workflows /opt/pipeline/workflows
 COPY nextflow.config /opt/pipeline/
+ADD bin /opt/pipeline/bin
 ADD containers /opt/pipeline/containers
 COPY containers.sh /opt/pipeline/
 COPY pixi.lock /opt/pipeline/
