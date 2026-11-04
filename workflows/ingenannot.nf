@@ -3,7 +3,7 @@ process isoform_ranking {
     tuple val(genome_prefix), path(collapsed_isoseq), path(bams), path(indices), val(manifest_str)
 
     output:
-    tuple val(genome_prefix), path("${genome_prefix}_isoforms.top.gff")
+    tuple val(genome_prefix), path("${genome_prefix}_isoforms.top.gff"), path("${genome_prefix}_isoforms.alternatives.gff")
 
     script:
     """
@@ -128,6 +128,7 @@ process ingenannot_compare {
     printf '%s\n%s' "${file_contents}" "${genome_prefix}_select.genes.gff\tselect" > ${genome_prefix}_compare.fof
     ingenannot -v 2 -p ${task.cpus} \
     compare \
+    --clustranded \
     ${genome_prefix}_compare.fof > "ingenannot_compare.log"
     """
 }
@@ -157,7 +158,17 @@ workflow ingenannot {
         .join(bam_indices)
         .join(manifest)
 
-    def top_isoforms = isoform_ranking(isoform_ranking_input)
+    def isoform_ranking_result = isoform_ranking(isoform_ranking_input)
+
+    def top_isoforms = isoform_ranking_result.map{
+         genome_prefix, top_isoforms, _alternatives_gff -> 
+         tuple(genome_prefix, top_isoforms)
+    }
+
+    def alternatives_gff_ch = isoform_ranking_result.map{
+         genome_prefix, _top_isoforms, alternatives_gff -> 
+         tuple(genome_prefix, alternatives_gff)
+    }
 
     def top_isoforms_gff_csi_ch =
         sort_bgzip_index_top_isoforms(top_isoforms)
@@ -205,6 +216,7 @@ workflow ingenannot {
         ingenannot_compare(comparison_input)
 
     emit:
+    alternatives_gff = alternatives_gff_ch
     top_isoforms_gff_csi = top_isoforms_gff_csi_ch
     aed_scores = aed_scores_ch
     selection = select_output

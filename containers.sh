@@ -5,6 +5,7 @@ mkdir -p apptainer-cache
 
 # Build custom containers
 apptainer build --force apptainer-cache/tiberius.sif containers/tiberius-small.def
+apptainer build --force apptainer-cache/debian.sif containers/debian.def
 apptainer build --force apptainer-cache/samtools.sif containers/samtools.def
 apptainer build --force apptainer-cache/helixer.sif containers/helixer.def
 apptainer build --force apptainer-cache/ingenannot.sif containers/ingenannot.def
@@ -17,3 +18,5 @@ apptainer pull apptainer-cache/braker3.sif docker://teambraker/braker3:v3.0.8
 apptainer pull apptainer-cache/stringtie.sif docker://quay.io/biocontainers/stringtie:3.0.3--h29c0135_0
 apptainer pull apptainer-cache/isoseq.sif docker://quay.io/biocontainers/isoseq:4.3.0--h9ee0642_0
 apptainer pull apptainer-cache/pbmm2.sif docker://quay.io/biocontainers/pbmm2:26.1.99--h9ee0642_0
+apptainer pull apptainer-cache/agat.sif docker://quay.io/biocontainers/agat:0.9.2--pl5321hdfd78af_2
+apptainer pull apptainer-cache/pbbam.sif docker://quay.io/biocontainers/pbbam:2.4.0--h077b44d_2

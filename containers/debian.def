@@ -1,0 +1,7 @@
+Bootstrap: docker
+From: debian:trixie-slim
+
+%post
+apt update -y
+apt install procps -y
+rm -rf /var/lib/apt/lists/*

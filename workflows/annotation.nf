@@ -24,6 +24,49 @@ process helixer {
     """
 }
 
+process helixer_strip_UTRs {
+    input: 
+    tuple val(genome_prefix), val("helixer"), path(helixer_gff)
+
+    output:
+    tuple val(genome_prefix), val("helixer"), path("${genome_prefix}_helixer_no_UTRs.gff")
+
+    script:
+    """
+    strip_UTRs.sh --drop-noncoding ${helixer_gff} > "${genome_prefix}_helixer_no_UTRs.gff"
+    """
+}
+
+process make_tiberius_gene_ids_unique {
+    input: 
+    tuple val(genome_prefix), val("tiberius"), path(tiberius_gtf)
+
+    output:
+    tuple val(genome_prefix), val("tiberius"), path("${genome_prefix}_tiberius_unique_gene_ids.gtf")
+
+    script:
+    """
+    make_tiberius_gene_ids_unique.sh ${tiberius_gtf} > ${genome_prefix}_tiberius_unique_gene_ids.gtf
+    """
+}
+
+process convert_tiberius_gtf_to_gff {
+    input:
+    tuple val(genome_prefix), val("tiberius"), path(tiberius_gtf)
+
+    output:
+    tuple val(genome_prefix), val("tiberius"), path("${genome_prefix}_tiberius.gff")
+
+    script:
+    """
+    agat_convert_sp_gxf2gxf.pl \
+        -gff ${tiberius_gtf} \
+        -o "${genome_prefix}_tiberius.gff" \
+        -gvo 3 \
+        --no_progressbar
+    """
+}
+
 process tiberius {
     label 'gpu'
 
@@ -112,13 +155,17 @@ workflow annotate {
 
     main:
     def helixer_annotation_ch = helixer(masked_file)
+    def helixer_no_UTRs = helixer_strip_UTRs(helixer_annotation_ch)
+
     def tiberius_annotation_ch = tiberius(masked_file)
+    def tiberius_unique_gene_ids = make_tiberius_gene_ids_unique(tiberius_annotation_ch)
+    def tiberius_gff = convert_tiberius_gtf_to_gff(tiberius_unique_gene_ids)
     def annevo_annotation_ch = annevo(masked_file)
 
     def braker3_annotation_ch = braker3(masked_file.join(protein_databases).join(bam_files))
 
-    def all_annotations = helixer_annotation_ch
-        .mix(tiberius_annotation_ch)
+    def all_annotations = helixer_no_UTRs
+        .mix(tiberius_gff)
         .mix(annevo_annotation_ch)
         .mix(braker3_annotation_ch)
 

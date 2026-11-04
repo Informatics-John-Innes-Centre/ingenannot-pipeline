@@ -104,9 +104,11 @@ workflow genome {
     star_bams = star.bams
     long_read_bams = isoseq_result.long_read_bams
     sorted_isoseq = isoseq_result.sorted_isoseq
+    abundance_txt = isoseq_result.abundance_txt
     miniprot = miniprot_result.gff_csi
     stringtie = stringtie_result.gff_csi
     aed_scores = ingenannot_result.aed_scores
+    isoform_alternatives_gff = ingenannot_result.alternatives_gff
     top_isoforms_gff_csi = ingenannot_result.top_isoforms_gff_csi
     ingenannot_selection = ingenannot_result.selection
     ingenannot_comparison = ingenannot_result.comparison_log
@@ -189,7 +191,9 @@ workflow {
     annotations = genome_result_ch.annotations
     star_bams = genome_result_ch.star_bams
     long_read_bams = genome_result_ch.long_read_bams
+    isoform_alternatives_gff = genome_result_ch.isoform_alternatives_gff
     sorted_isoseq = genome_result_ch.sorted_isoseq
+    abundance_txt = genome_result_ch.abundance_txt
     miniprot = genome_result_ch.miniprot
     stringtie = genome_result_ch.stringtie
     aed_scores = genome_result_ch.aed_scores
@@ -201,31 +205,43 @@ workflow {
 output {
     masked_genomes {
         path { genome_prefix, _file ->
-            "${genome_prefix}"
+            "${genome_prefix}/genomes"
         }
     }
 
     annotations {
         path { genome_prefix, _label, _file ->
-            "${genome_prefix}/annotations"
+            "${genome_prefix}/annotation"
         }
     }
 
     star_bams {
         path { genome_prefix, _sample, _bam, _csi ->
-            "${genome_prefix}/star_mappings"
+            "${genome_prefix}/star"
         }
     }
 
     long_read_bams {
         path { genome_prefix, _file->
-            "${genome_prefix}/long_read_bams"
+            "${genome_prefix}/isoseq"
+        }
+    }
+
+    abundance_txt {
+        path { genome_prefix, _a ->
+            "${genome_prefix}/isoseq"            
         }
     }
 
     sorted_isoseq {
         path { genome_prefix, _a, _b ->
-            "${genome_prefix}/collapsed_isoseq"            
+            "${genome_prefix}/isoseq"            
+        }
+    }
+
+    isoform_alternatives_gff {
+        path { genome_prefix, _a ->
+            "${genome_prefix}/isoseq"            
         }
     }
 
@@ -243,7 +259,7 @@ output {
 
     top_isoforms_gff_csi {
         path { genome_prefix, _gff, _csi ->
-            "${genome_prefix}/top_isoforms"
+            "${genome_prefix}/isoseq"
         }
     }
 
